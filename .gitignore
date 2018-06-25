@@ -1,0 +1,22 @@
+# Windows:
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Python:
+*.py[cod]
+*.so
+*.egg
+*.egg-info
+
+# Virtual environment
+venv/
+.idea/
+env/
+
+# migrate
+migrations/
+
+# __pycache__
+__pycache__/
+

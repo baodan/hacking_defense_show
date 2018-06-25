@@ -1,0 +1,2310 @@
+选项（options）:
+	GET: show
+	url: /assets/options/uuid 
+	example:
+		request:  http://127.0.0.1:5000//assets/options/4ec0b732-6884-4abb-815f-e4d7178fca29
+		response: 
+			{
+			    "option": {
+				"e_name": "device_type",
+				"e_value": "switch",
+				"id": "4ec0b732-6884-4abb-815f-e4d7178fca29",
+				"name": "设备类型",
+				"parent_id": null,
+				"value": "交换机"
+			    }
+			}
+	GET:list
+	url:/assets/options/
+	example:
+		request: http://127.0.0.1:5000/assets/options/
+		responce:
+			{
+			    "options": [
+				{
+				    "e_name": "device_type",
+				    "e_value": "switch",
+				    "id": "4ec0b732-6884-4abb-815f-e4d7178fca29",
+				    "name": "设备类型",
+				    "parent_id": null,
+				    "value": "交换机"
+				},
+				{
+				    "e_name": "vender",
+				    "e_value": "Cisco",
+				    "id": "1e8110c8-c9d9-4d76-b6ae-c0e2ae505134",
+				    "name": "厂商",
+				    "parent_id": "4ec0b732-6884-4abb-815f-e4d7178fca29",
+				    "value": "Cisco"
+				},
+				{
+				    "e_name": "device_model",
+				    "e_value": "M",
+				    "id": "37d5ce41-6de8-41e2-8460-b1618bd85dd5",
+				    "name": "设备型号",
+				    "parent_id": "1e8110c8-c9d9-4d76-b6ae-c0e2ae505134",
+				    "value": "M"
+				},
+				{
+				    "e_name": "aa",
+				    "e_value": "aa",
+				    "id": "aa",
+				    "name": "纳管方式",
+				    "parent_id": "aa",
+				    "value": "aa"
+				}
+			    ]
+			}
+	POST:
+	url:/assets/options/
+	example:
+		单个资源：
+			request: 
+				url :  http://127.0.0.1:5000/assets/options/
+				body:
+				{
+				    "option": {
+					"e_name": "device_type",
+					"e_value": "router",
+					"name": "设备类型",
+					"parent_id": null,
+					"value": "路由器"
+				    }
+				}
+			response:
+				{
+				    "option": {
+					"e_name": "device_type",
+					"e_value": "router",
+					"id": "ea7b332d-2f7f-4be5-bb82-4d9ce89c3dad",
+					"name": "设备类型",
+					"parent_id": null,
+					"value": "路由器"
+				    }
+				}
+		批量创建：
+			request: 
+				url :  http://127.0.0.1:5000/assets/options/
+				body:
+				{
+				　　"options":[
+				　　　　{
+				　　　　　　"e_name":"device_type",
+				　　　　　　"e_value":"router",
+				　　　　　　"name":"设备类型",
+				　　　　　　"value":"路由器"
+				　　　　},
+				　　　　{
+				　　　　　　"e_name":"vender",
+				　　　　　　"e_value":"Huawei",
+				　　　　　　"name":"厂商",
+				　　　　　　"value":"华为"
+				　　　　}
+				　　]
+				}
+			response:
+				{
+				　　"options":[
+				　　　　{
+				　　　　　　"e_name":"device_type",
+				　　　　　　"e_value":"router",
+				　　　　　　"id":"1b1e9cdb-3cbe-470b-843a-8a465b467f8d",
+				　　　　　　"name":"设备类型",
+				　　　　　　"parent_id":null,
+				　　　　　　"value":"路由器"
+				　　　　},
+				　　　　{
+				　　　　　　"e_name":"vender",
+				　　　　　　"e_value":"Huawei",
+				　　　　　　"id":"c74dc3ef-a2a1-409a-b859-dd03c3a66525",
+				　　　　　　"name":"厂商",
+				　　　　　　"parent_id":null,
+				　　　　　　"value":"华为"
+				　　　　}
+				　　]
+				}
+	DELETE 
+	url: /assets/options/uuid 
+	example: 
+		request: http://127.0.0.1:5000/assets/options/ea7b332d-2f7f-4be5-bb82-4d9ce89c3dad
+		response: status 204
+	PUT:
+        url:/assests/options/uuid
+        example: 
+		request: 
+			url :  http://127.0.0.1:5000/assets/options/d4388652-6b12-4ebe-9a89-514ed20a09c6
+			body:  
+			{
+			    "option": {
+				"e_name": "room_type",
+				"e_value": "test_r_type",
+				"id": "d4388652-6b12-4ebe-9a89-514ed20a09c6",
+				"name": "机房类型",
+				"parent_id": null,
+				"value": "测试机房类型1"
+			    }
+			}
+		response:
+			{
+			    "option": {
+				"e_name": "room_type",
+				"e_value": "test_r_type",
+				"id": "d4388652-6b12-4ebe-9a89-514ed20a09c6",
+				"name": "机房类型",
+				"parent_id": null,
+				"value": "测试机房类型1"
+			    }
+			}
+
+网络区域(netareas)：
+	GET: show
+	url: /assets/netareas/uuid 
+	example:
+		request:  http://127.0.0.1:5000/assets/netareas/8793a711-991c-4c78-8a76-6d138f826359
+		response: 
+			{
+			    "net_area": {
+				"area_name": "区域1",
+				"area_type": "类型",
+				"id": "8793a711-991c-4c78-8a76-6d138f826359",
+				"is_active": true,
+				"remark": null
+			    }
+			}
+	GET:list
+	url:/assets/netareas/
+	example:
+		request: http://127.0.0.1:5000/assets/options/
+		responce:
+			{
+			    "net_areas": [
+				{
+				    "area_name": "区域1",
+				    "area_type": "类型",
+				    "id": "8793a711-991c-4c78-8a76-6d138f826359",
+				    "is_active": true,
+				    "remark": null
+				},
+				{
+				    "area_name": "区域2",
+				    "area_type": "类型2",
+				    "id": "6f41e4a8-47e7-4866-b79a-5c92c6a4d581",
+				    "is_active": true,
+				    "remark": "网络区域"
+				}
+			    ]
+			}
+	POST:
+	url:/assets/netareas/
+	example:
+		单个资源：
+			request: 
+				url :  http://127.0.0.1:5000/assets/options/
+				body:
+				{
+				    "net_area":
+					{
+					    "area_name": "区域2",
+					    "area_type": "类型2",
+					    "is_active": true,
+					    "remark": "网络区域"
+					}
+				}
+			response:
+			{
+			    "net_area": {
+				"area_name": "区域2",
+				"area_type": "类型2",
+				"id": "6f41e4a8-47e7-4866-b79a-5c92c6a4d581",
+				"is_active": true,
+				"remark": "网络区域"
+			    }
+			}
+		批量创建：
+			request: 
+				url :  http://127.0.0.1:5000/assets/options/
+				body:
+				{
+				    "net_areas":[
+				　　　　{
+				　　　　　　"area_name":"new区域1",
+				　　　　　　"area_type":"类型2",
+				　　　　　　"is_active":true,
+				　　　　　　"remark":"网络区域"
+				　　　　},
+				　　　　{
+				　　　　　　"area_name":"new区域2",
+				　　　　　　"area_type":"类型3",
+				　　　　　　"is_active":true,
+				　　　　　　"remark":"网络区域"
+				　　　　}
+				　　]
+				}
+			response:
+				{
+				    "net_areas": [
+					{
+					    "area_name": "new区域1",
+					    "area_type": "类型2",
+					    "id": "0af2856d-2d08-43fd-a696-ff92e9124a55",
+					    "is_active": true,
+					    "remark": "网络区域"
+					},
+					{
+					    "area_name": "new区域2",
+					    "area_type": "类型3",
+					    "id": "cce4d404-d061-4403-83ef-03b308c13315",
+					    "is_active": true,
+					    "remark": "网络区域"
+					}
+				    ]
+				}
+			request: 
+				url :  http://127.0.0.1:5000/assets/options/
+				body:
+					{
+					　　"options":[
+					　　　　{
+					　　　　　　"e_name":"device_type",
+					　　　　　　"e_value":"router",
+					　　　　　　"name":"设备类型",
+					　　　　　　"value":"路由器"
+					　　　　},
+					　　　　{
+					　　　　　　"e_name":"vender",
+					　　　　　　"e_value":"Huawei",
+					　　　　　　"name":"厂商",
+					　　　　　　"value":"华为"
+					　　　　}
+					　　]
+					}
+			response:
+				{
+				"options": [
+					{
+					"e_name": "device_type",
+					"e_value": "router",
+					"id": "1b1e9cdb-3cbe-470b-843a-8a465b467f8d",
+					"name": "设备类型",
+					"parent_id": null,
+					"value": "路由器"
+					},
+					{
+					"e_name": "vender",
+					"e_value": "Huawei",
+					"id": "c74dc3ef-a2a1-409a-b859-dd03c3a66525",
+					"name": "厂商",
+					"parent_id": null,
+					"value": "华为"
+					}
+				]
+				}
+	DELETE 
+	url: /assets/netareas/uuid 
+	example: 
+		request: http://127.0.0.1:5000/assets/options/ea7b332d-2f7f-4be5-bb82-4d9ce89c3dad
+		response: status 204
+	PUT:
+        url:/assets/netareas/uuid
+        example: 
+            request: url :  http://127.0.0.1:5000/assets/netareas/8793a711-991c-4c78-8a76-6d138f826359
+                     body:
+				{
+				    "net_area":
+					{
+					    "area_name": "区域2_改",
+					    "area_type": "类型2",
+					    "is_active": true,
+					    "remark": "网络区域"
+					}
+				}
+            response:
+			{
+			    "net_area": {
+				"area_name": "区域2_改",
+				"area_type": "类型2",
+				"id": "8793a711-991c-4c78-8a76-6d138f826359",
+				"is_active": true,
+				"remark": "网络区域"
+			    }
+			}
+
+数据中心(datacenters) :
+	GET: show
+	url: /assets/datacenters/uuid 
+	example:
+		request:  http://127.0.0.1:5000/assets/datacenters/531f3dc5-bd39-494c-b7f2-208447644476
+		response: 
+			{
+			    "datacenter": {
+				"address": "edf",
+				"datacenter_abbr": "dc1",
+				"datacenter_ename": "dc1",
+				"datacenter_name": "数据1",
+				"id": "531f3dc5-bd39-494c-b7f2-208447644476",
+				"is_active": true,
+				"remark": null
+			    }
+			}
+	GET:list
+	url:/assets/datacenters/
+	example:
+		request: http://127.0.0.1:5000/assets/datacenters/
+		responce:
+			{
+			    "datacenters": [
+				{
+				    "address": "edf",
+				    "datacenter_abbr": "dc1",
+				    "datacenter_ename": "dc1",
+				    "datacenter_name": "数据1",
+				    "id": "531f3dc5-bd39-494c-b7f2-208447644476",
+				    "is_active": true,
+				    "remark": null
+				}
+			    ]
+			}
+	POST:
+	url:/assets/datacenters/
+	example:
+		单个资源：
+			request: 
+				url :  http://127.0.0.1:5000/assets/datacenters/
+				body:
+				{
+				    "datacenter": {
+					"address": "test_addr",
+					"datacenter_abbr": "dc2",
+					"datacenter_ename": "dc2",
+					"datacenter_name": "数据2",
+					"is_active": true,
+					"remark": "Test Data Center"
+				    }
+				}
+			response:
+				{
+				    "option": {
+					"e_name": "device_type",
+					"e_value": "router",
+					"id": "ea7b332d-2f7f-4be5-bb82-4d9ce89c3dad",
+					"name": "设备类型",
+					"parent_id": null,
+					"value": "路由器"
+				    }
+				}
+		批量创建：
+			request: 
+				url :  http://127.0.0.1:5000/assets/datacenters/
+				body:
+				{
+				    "datacenters": [
+					{
+					    "address": "test_addr3",
+					    "datacenter_abbr": "dc3",
+					    "datacenter_ename": "dc3",
+					    "datacenter_name": "数据3",
+					    "is_active": true
+					},
+					{
+					    "address": "test_addr4",
+					    "datacenter_abbr": "dc4",
+					    "datacenter_ename": "dc4",
+					    "datacenter_name": "数据4",
+					    "is_active": true,
+					    "remark": "Test Data Center4"
+					}
+				    ]
+				}
+			response:
+				{
+				    "datacenters": [
+					{
+					    "address": "test_addr3",
+					    "datacenter_abbr": "dc3",
+					    "datacenter_ename": "dc3",
+					    "datacenter_name": "数据3",
+					    "id": "df923c20-bfe4-4a95-8afa-4fa82e5f6f67",
+					    "is_active": true,
+					    "remark": null
+					},
+					{
+					    "address": "test_addr4",
+					    "datacenter_abbr": "dc4",
+					    "datacenter_ename": "dc4",
+					    "datacenter_name": "数据4",
+					    "id": "99ec09e0-a896-4f61-b199-e08c286bf0b6",
+					    "is_active": true,
+					    "remark": "Test Data Center4"
+					}
+				    ]
+				}
+	DELETE 
+	url: /assets/datacenters/uuid 
+	example: 
+		request: http://127.0.0.1:5000/assets/datacenters/99ec09e0-a896-4f61-b199-e08c286bf0b6
+		response: status 204
+	PUT:
+        url:/assests/datacenters/uuid
+        example: 
+		request: 
+			url :  http://127.0.0.1:5000/assets/datacenters/531f3dc5-bd39-494c-b7f2-208447644476
+			body:  
+			{
+			    "datacenter": {
+				"address": "new_address",
+				"datacenter_abbr": "dc1",
+				"datacenter_ename": "dc1",
+				"datacenter_name": "数据1",
+				"is_active": true,
+				"remark": "Changed addr"
+			    }
+			}
+		response:
+			{
+			    "datacenter": {
+				"address": "edf",
+				"datacenter_abbr": "dc1",
+				"datacenter_ename": "dc1",
+				"datacenter_name": "数据1",
+				"id": "531f3dc5-bd39-494c-b7f2-208447644476",
+				"is_active": true,
+				"remark": null
+			    }
+			}
+
+数据中心楼宇(buildings) :
+	GET: show
+	url: /assets/buildings/uuid 
+	example:
+		request:  http://127.0.0.1:5000/assets/buildings/24b358a0-fb3c-4827-a833-ae0bbd0ea068
+		response: 
+			{
+			    "datacenter_building": {
+				"bdg_name": "楼座1",
+				"datacenter_id": "531f3dc5-bd39-494c-b7f2-208447644476",
+				"id": "24b358a0-fb3c-4827-a833-ae0bbd0ea068",
+				"is_active": true,
+				"remark": null
+			    }
+			}
+	GET:list
+	url:/assets/buildings/
+	example:
+		request: http://127.0.0.1:5000/assets/datacenters/
+		responce:
+			{
+			    "datacenter_buildings": [
+				{
+				    "bdg_name": "楼座1",
+				    "datacenter_id": "531f3dc5-bd39-494c-b7f2-208447644476",
+				    "id": "24b358a0-fb3c-4827-a833-ae0bbd0ea068",
+				    "is_active": true,
+				    "remark": null
+				}
+			    ]
+			}
+
+	POST:
+	url:/assets/buildings/
+	example:
+		单个资源：
+			request: 
+				url :  http://127.0.0.1:5000/assets/buildings/
+				body:
+				{
+				    "datacenter_building": {
+					"bdg_name": "楼座2",
+					"datacenter_id": "531f3dc5-bd39-494c-b7f2-208447644476",
+					"is_active": true,
+					"remark": "test building"
+				    }
+				}
+			response:
+				{
+				    "datacenter_building": {
+					"bdg_name": "楼座2",
+					"datacenter_id": "531f3dc5-bd39-494c-b7f2-208447644476",
+					"id": "b3fca223-c532-4c05-8d13-9a30bee4b7bd",
+					"is_active": true,
+					"remark": "test building"
+				    }
+				}
+		批量创建：
+			request: 
+				url :  http://127.0.0.1:5000/assets/buildings/
+				body:
+				{
+				    "datacenter_buildings": [
+					{
+					    "bdg_name": "b楼座1",
+					    "datacenter_id": "531f3dc5-bd39-494c-b7f2-208447644476",
+					    "is_active": true
+					},
+					{
+					    "bdg_name": "b楼座2",
+					    "datacenter_id": "531f3dc5-bd39-494c-b7f2-208447644476",
+					    "is_active": true,
+					    "remark": "批量创建测试"
+					}
+				    ]
+				}
+			response:
+				{
+				    "datacenter_buildings": [
+					{
+					    "bdg_name": "b楼座1",
+					    "datacenter_id": "531f3dc5-bd39-494c-b7f2-208447644476",
+					    "id": "a41644f3-f976-4cb0-ba30-b85a853a19d5",
+					    "is_active": true,
+					    "remark": null
+					},
+					{
+					    "bdg_name": "b楼座2",
+					    "datacenter_id": "531f3dc5-bd39-494c-b7f2-208447644476",
+					    "id": "21893633-487d-4ee4-89d2-6bc91df514df",
+					    "is_active": true,
+					    "remark": "批量创建测试"
+					}
+				    ]
+				}
+	DELETE 
+	url: /assets/buildings/uuid 
+	example: 
+		request: http://127.0.0.1:5000/assets/buildings/a41644f3-f976-4cb0-ba30-b85a853a19d5
+		response: status 204
+	PUT:
+        url:/assests/buildings/uuid
+        example: 
+		request: 
+			url :  http://127.0.0.1:5000/assets/buildings/21893633-487d-4ee4-89d2-6bc91df514df
+			body:  
+			{
+			    "datacenter_building": {
+				"bdg_name": "b楼座2_更新",
+				"datacenter_id": "531f3dc5-bd39-494c-b7f2-208447644476",
+				"is_active": true,
+				"remark": "更新接口测试"
+			    }
+			}
+		response:
+			{
+			    "datacenter_building": {
+				"bdg_name": "b楼座2_更新",
+				"datacenter_id": "531f3dc5-bd39-494c-b7f2-208447644476",
+				"id": "21893633-487d-4ee4-89d2-6bc91df514df",
+				"is_active": true,
+				"remark": "更新接口测试"
+			    }
+			}
+
+机房(rooms) :
+	GET: show
+	url: /assets/rooms/uuid 
+	example:
+		request:  http://127.0.0.1:5000/assets/rooms/914ae3a0-c486-4702-8f8c-3214a39af517
+		response: 
+			{
+			    "datacenter_room": {
+				"id": "914ae3a0-c486-4702-8f8c-3214a39af517",
+				"room_name": "房间1",
+				"building_id": "24b358a0-fb3c-4827-a833-ae0bbd0ea068",
+				"room_no": "No.1",
+				"room_unit": null,
+				"room_dep": null,
+				"room_charger": null,
+				"room_type": null,
+				"plan_weight": null,
+				"app_weight": null,
+				"plan_power": null,
+				"app_power": null,
+				"plan_pefrigrate": null,
+				"app_pefrigrate": null,
+				"plan_cabinet": null,
+				"app_cabinet": null,
+				"plan_area": null,
+				"state": null,
+				"remark": null,
+				"is_active": true
+			    }
+			}
+	GET:list
+	url:/assets/rooms/
+	example:
+		request: http://127.0.0.1:5000/assets/rooms/
+		responce:
+			{
+			    "datacenter_rooms": [
+				{
+				    "id": "914ae3a0-c486-4702-8f8c-3214a39af517",
+				    "room_name": "房间1",
+				    "building_id": "24b358a0-fb3c-4827-a833-ae0bbd0ea068",
+				    "room_no": "No.1",
+				    "room_unit": null,
+				    "room_dep": null,
+				    "room_charger": null,
+				    "room_type": null,
+				    "plan_weight": null,
+				    "app_weight": null,
+				    "plan_power": null,
+				    "app_power": null,
+				    "plan_pefrigrate": null,
+				    "app_pefrigrate": null,
+				    "plan_cabinet": null,
+				    "app_cabinet": null,
+				    "plan_area": null,
+				    "state": null,
+				    "remark": null,
+				    "is_active": true
+				},
+				{
+				    "id": "f45481c2-5e9a-49b1-a514-e9bc324b2395",
+				    "room_name": "房间1",
+				    "building_id": "24b358a0-fb3c-4827-a833-ae0bbd0ea068",
+				    "room_no": "room01",
+				    "room_unit": "a828228a-08b8-42ab-b7e3-66109e2d5976",
+				    "room_dep": "9a88f6a9-4da5-49d0-82fb-1e47db1701cb",
+				    "room_charger": "cc829d97-405c-457d-abc1-29a717cf184d",
+				    "room_type": "d4388652-6b12-4ebe-9a89-514ed20a09c6",
+				    "plan_weight": 123,
+				    "app_weight": 3,
+				    "plan_power": 23,
+				    "app_power": 2,
+				    "plan_pefrigrate": 122,
+				    "app_pefrigrate": 3,
+				    "plan_cabinet": 16,
+				    "app_cabinet": 4,
+				    "plan_area": 123,
+				    "state": null,
+				    "remark": null,
+				    "is_active": true
+				},
+				{
+				    "id": "9f2923fe-b61a-44d2-ac6e-7a87450e8ccd",
+				    "room_name": "房间4",
+				    "building_id": "24b358a0-fb3c-4827-a833-ae0bbd0ea068",
+				    "room_no": "room4",
+				    "room_unit": "c56cda00-c6f3-4302-bd09-516e37abba21",
+				    "room_dep": "9f55ad3e-e973-4cb9-bdf8-63795097d1d8",
+				    "room_charger": "75bb0b94-a5e7-42b3-b254-95e5b68a8105",
+				    "room_type": "d4388652-6b12-4ebe-9a89-514ed20a09c6",
+				    "plan_weight": 15,
+				    "app_weight": 2,
+				    "plan_power": 65,
+				    "app_power": 21,
+				    "plan_pefrigrate": 124,
+				    "app_pefrigrate": 121,
+				    "plan_cabinet": 8,
+				    "app_cabinet": 7,
+				    "plan_area": 14,
+				    "state": null,
+				    "remark": null,
+				    "is_active": true
+				},
+				{
+				    "id": "b3ac169e-d010-4618-9bfc-6c509646fbde",
+				    "room_name": "房间3",
+				    "building_id": "24b358a0-fb3c-4827-a833-ae0bbd0ea068",
+				    "room_no": "room03",
+				    "room_unit": "03a649b5-9e74-47cd-a6a4-1f9d858345f8",
+				    "room_dep": "c7a6c4ca-036a-4b98-bddd-e827c63f084e",
+				    "room_charger": "67b769f7-4179-4abe-9948-5445d05c479d",
+				    "room_type": "d4388652-6b12-4ebe-9a89-514ed20a09c6",
+				    "plan_weight": 123,
+				    "app_weight": 3,
+				    "plan_power": 23,
+				    "app_power": 2,
+				    "plan_pefrigrate": 122,
+				    "app_pefrigrate": 3,
+				    "plan_cabinet": 16,
+				    "app_cabinet": 4,
+				    "plan_area": 123,
+				    "state": null,
+				    "remark": null,
+				    "is_active": true
+				}
+			    ]
+			}
+	POST:
+	url:/assets/rooms/
+	example:
+		单个资源：
+			request: 
+				url :  http://127.0.0.1:5000/assets/rooms/
+				body:
+				{
+				    "datacenter_room": {
+					"app_cabinet":4,
+					"app_pefrigrate":3,
+					"app_power":2,
+					"app_weight":3,
+					"building_id": "24b358a0-fb3c-4827-a833-ae0bbd0ea068",
+					"is_active": true,
+					"plan_area": 123,
+					"plan_cabinet": 16,
+					"plan_pefrigrate": 122,
+					"plan_power": 23,
+					"plan_weight": 123,
+					"room_charger": "cc829d97-405c-457d-abc1-29a717cf184d",
+					"room_dep": "9a88f6a9-4da5-49d0-82fb-1e47db1701cb",
+					"room_name": "房间1",
+					"room_no": "room01",
+					"room_type": "d4388652-6b12-4ebe-9a89-514ed20a09c6",
+					"room_unit": "a828228a-08b8-42ab-b7e3-66109e2d5976"
+				    }
+				}
+			response:
+				{
+				    "datacenter_room": {
+					"id": "f45481c2-5e9a-49b1-a514-e9bc324b2395",
+					"room_name": "房间1",
+					"building_id": "24b358a0-fb3c-4827-a833-ae0bbd0ea068",
+					"room_no": "room01",
+					"room_unit": "a828228a-08b8-42ab-b7e3-66109e2d5976",
+					"room_dep": "9a88f6a9-4da5-49d0-82fb-1e47db1701cb",
+					"room_charger": "cc829d97-405c-457d-abc1-29a717cf184d",
+					"room_type": "d4388652-6b12-4ebe-9a89-514ed20a09c6",
+					"plan_weight": 123,
+					"app_weight": 3,
+					"plan_power": 23,
+					"app_power": 2,
+					"plan_pefrigrate": 122,
+					"app_pefrigrate": 3,
+					"plan_cabinet": 16,
+					"app_cabinet": 4,
+					"plan_area": 123,
+					"state": null,
+					"remark": null,
+					"is_active": true
+				    }
+				}
+		批量创建：
+			request: 
+				url :  http://127.0.0.1:5000/assets/rooms/
+				body:
+				{
+				    "datacenter_rooms": [
+					{
+					    "room_name": "房间4",
+					    "building_id": "24b358a0-fb3c-4827-a833-ae0bbd0ea068",
+					    "room_no": "room4",
+					    "room_unit": "c56cda00-c6f3-4302-bd09-516e37abba21",
+					    "room_dep": "9f55ad3e-e973-4cb9-bdf8-63795097d1d8",
+					    "room_charger": "75bb0b94-a5e7-42b3-b254-95e5b68a8105",
+					    "room_type": "d4388652-6b12-4ebe-9a89-514ed20a09c6",
+					    "plan_weight": 15,
+					    "app_weight": 2,
+					    "plan_power": 65,
+					    "app_power": 21,
+					    "plan_pefrigrate": 124,
+					    "app_pefrigrate": 121,
+					    "plan_cabinet": 8,
+					    "app_cabinet": 7,
+					    "plan_area": 14,
+					    "is_active": true
+					},
+					{
+					    "room_name": "房间3",
+					    "building_id": "24b358a0-fb3c-4827-a833-ae0bbd0ea068",
+					    "room_no": "room03",
+					    "room_unit": "03a649b5-9e74-47cd-a6a4-1f9d858345f8",
+					    "room_dep": "c7a6c4ca-036a-4b98-bddd-e827c63f084e",
+					    "room_charger": "67b769f7-4179-4abe-9948-5445d05c479d",
+					    "room_type": "d4388652-6b12-4ebe-9a89-514ed20a09c6",
+					    "plan_weight": 123,
+					    "app_weight": 3,
+					    "plan_power": 23,
+					    "app_power": 2,
+					    "plan_pefrigrate": 122,
+					    "app_pefrigrate": 3,
+					    "plan_cabinet": 16,
+					    "app_cabinet": 4,
+					    "plan_area": 123,
+					    "is_active": true
+					}
+				    ]
+				}
+			response:
+				{
+				    "datacenter_rooms": [
+					{
+					    "id": "9f2923fe-b61a-44d2-ac6e-7a87450e8ccd",
+					    "room_name": "房间4",
+					    "building_id": "24b358a0-fb3c-4827-a833-ae0bbd0ea068",
+					    "room_no": "room4",
+					    "room_unit": "c56cda00-c6f3-4302-bd09-516e37abba21",
+					    "room_dep": "9f55ad3e-e973-4cb9-bdf8-63795097d1d8",
+					    "room_charger": "75bb0b94-a5e7-42b3-b254-95e5b68a8105",
+					    "room_type": "d4388652-6b12-4ebe-9a89-514ed20a09c6",
+					    "plan_weight": 15,
+					    "app_weight": 2,
+					    "plan_power": 65,
+					    "app_power": 21,
+					    "plan_pefrigrate": 124,
+					    "app_pefrigrate": 121,
+					    "plan_cabinet": 8,
+					    "app_cabinet": 7,
+					    "plan_area": 14,
+					    "state": null,
+					    "remark": null,
+					    "is_active": true
+					},
+					{
+					    "id": "b3ac169e-d010-4618-9bfc-6c509646fbde",
+					    "room_name": "房间3",
+					    "building_id": "24b358a0-fb3c-4827-a833-ae0bbd0ea068",
+					    "room_no": "room03",
+					    "room_unit": "03a649b5-9e74-47cd-a6a4-1f9d858345f8",
+					    "room_dep": "c7a6c4ca-036a-4b98-bddd-e827c63f084e",
+					    "room_charger": "67b769f7-4179-4abe-9948-5445d05c479d",
+					    "room_type": "d4388652-6b12-4ebe-9a89-514ed20a09c6",
+					    "plan_weight": 123,
+					    "app_weight": 3,
+					    "plan_power": 23,
+					    "app_power": 2,
+					    "plan_pefrigrate": 122,
+					    "app_pefrigrate": 3,
+					    "plan_cabinet": 16,
+					    "app_cabinet": 4,
+					    "plan_area": 123,
+					    "state": null,
+					    "remark": null,
+					    "is_active": true
+					}
+				    ]
+				}
+	DELETE 
+	url: /assets/rooms/uuid 
+	example: 
+		request: http://127.0.0.1:5000/assets/rooms/b3ac169e-d010-4618-9bfc-6c509646fbde
+		response: status 204
+	PUT:
+        url:/assests/rooms/uuid
+        example: 
+		request: 
+			url :  http://127.0.0.1:5000/assets/buildings/21893633-487d-4ee4-89d2-6bc91df514df
+			body:  
+			{
+			    "datacenter_room": {
+				"room_name": "房间1_更新",
+				"building_id": "24b358a0-fb3c-4827-a833-ae0bbd0ea068",
+				"room_no": "No.1_new",
+				"room_unit": "af7825a0-3c4f-4359-a43d-a5e321f3017e",
+				"room_dep": "962530ad-6be1-4d65-ad19-c91fc74579b0",
+				"room_charger": "4e6368fe-d879-4a44-942a-26f802353dfc",
+				"room_type": "d4388652-6b12-4ebe-9a89-514ed20a09c6",
+				"plan_weight": 14,
+				"app_weight": 2,
+				"plan_power": 54,
+				"app_power": 23,
+				"plan_pefrigrate": 125,
+				"app_pefrigrate": 12,
+				"plan_cabinet": 5,
+				"app_cabinet": 2,
+				"plan_area": 64,
+				"is_active": true
+			    }
+			}
+		response:
+			{
+			    "datacenter_room": {
+				"id": "914ae3a0-c486-4702-8f8c-3214a39af517",
+				"room_name": "房间1_更新",
+				"building_id": "24b358a0-fb3c-4827-a833-ae0bbd0ea068",
+				"room_no": "No.1_new",
+				"room_unit": "af7825a0-3c4f-4359-a43d-a5e321f3017e",
+				"room_dep": "962530ad-6be1-4d65-ad19-c91fc74579b0",
+				"room_charger": "4e6368fe-d879-4a44-942a-26f802353dfc",
+				"room_type": "d4388652-6b12-4ebe-9a89-514ed20a09c6",
+				"plan_weight": 14,
+				"app_weight": 2,
+				"plan_power": 54,
+				"app_power": 23,
+				"plan_pefrigrate": 125,
+				"app_pefrigrate": 12,
+				"plan_cabinet": 5,
+				"app_cabinet": 2,
+				"plan_area": 64,
+				"state": null,
+				"remark": null,
+				"is_active": true
+			    }
+			}
+
+机柜(cabinets)：
+	GET: show
+	url: /assets/cabinets/uuid 
+	example:
+		request:  http://127.0.0.1:5000/assets/cabinets/6f774c54-b0a4-48c8-a17d-4c41cde6ae46
+		response: 
+			{
+			    "cabinet": {
+				"id": "6f774c54-b0a4-48c8-a17d-4c41cde6ae46",
+				"cabinet_sn": "abcs",
+				"cabinet_name": "机柜",
+				"room_id": "914ae3a0-c486-4702-8f8c-3214a39af517",
+				"cabinet_unit": "8db5663c-17f6-4065-9b9c-e88d3a0a007e",
+				"cabinet_dep": "808b9b19-0c96-4c36-bbac-aedd4cfb2729",
+				"cabinet_charger": "6bf72eb6-d3cd-441d-b411-3f00484d6b38",
+				"cabinet_type": "2271691c-96b2-44c1-9178-3cfbf36b9900",
+				"plan_weight": 60,
+				"app_weight": 23,
+				"plan_power": 400,
+				"app_power": 23,
+				"plan_u": 6,
+				"app_u": 4,
+				"plan_lightport": 40,
+				"app_lightport": 1,
+				"plan_netport": 40,
+				"app_netport": 3,
+				"plan_cabinet": 40,
+				"app_cabinet": 2,
+				"state": null,
+				"remark": "机柜",
+				"is_active": true
+			    }
+			}
+	GET:list
+	url:/assets/cabinets/
+	example:
+		request: http://127.0.0.1:5000/assets/cabinets/
+		responce:
+			{
+			    "cabinets": [
+				{
+				    "id": "eea113a2-02bc-4f28-a94f-79bef9129a94",
+				    "cabinet_sn": "abc",
+				    "cabinet_name": "机柜1",
+				    "room_id": "914ae3a0-c486-4702-8f8c-3214a39af517",
+				    "cabinet_unit": null,
+				    "cabinet_dep": null,
+				    "cabinet_charger": null,
+				    "cabinet_type": null,
+				    "plan_weight": null,
+				    "app_weight": null,
+				    "plan_power": null,
+				    "app_power": null,
+				    "plan_u": null,
+				    "app_u": null,
+				    "plan_lightport": null,
+				    "app_lightport": null,
+				    "plan_netport": null,
+				    "app_netport": null,
+				    "plan_cabinet": null,
+				    "app_cabinet": null,
+				    "state": null,
+				    "remark": null,
+				    "is_active": true
+				},
+				{
+				    "id": "6f774c54-b0a4-48c8-a17d-4c41cde6ae46",
+				    "cabinet_sn": "abcs",
+				    "cabinet_name": "机柜",
+				    "room_id": "914ae3a0-c486-4702-8f8c-3214a39af517",
+				    "cabinet_unit": "8db5663c-17f6-4065-9b9c-e88d3a0a007e",
+				    "cabinet_dep": "808b9b19-0c96-4c36-bbac-aedd4cfb2729",
+				    "cabinet_charger": "6bf72eb6-d3cd-441d-b411-3f00484d6b38",
+				    "cabinet_type": "2271691c-96b2-44c1-9178-3cfbf36b9900",
+				    "plan_weight": 60,
+				    "app_weight": 23,
+				    "plan_power": 400,
+				    "app_power": 23,
+				    "plan_u": 6,
+				    "app_u": 4,
+				    "plan_lightport": 40,
+				    "app_lightport": 1,
+				    "plan_netport": 40,
+				    "app_netport": 3,
+				    "plan_cabinet": 40,
+				    "app_cabinet": 2,
+				    "state": null,
+				    "remark": "机柜",
+				    "is_active": true
+				},
+				{
+				    "id": "efead8df-7b49-4f2b-8d48-d0476d00cb03",
+				    "cabinet_sn": "1234",
+				    "cabinet_name": "机柜2",
+				    "room_id": "914ae3a0-c486-4702-8f8c-3214a39af517",
+				    "cabinet_unit": null,
+				    "cabinet_dep": null,
+				    "cabinet_charger": null,
+				    "cabinet_type": null,
+				    "plan_weight": null,
+				    "app_weight": null,
+				    "plan_power": null,
+				    "app_power": null,
+				    "plan_u": null,
+				    "app_u": null,
+				    "plan_lightport": null,
+				    "app_lightport": null,
+				    "plan_netport": null,
+				    "app_netport": null,
+				    "plan_cabinet": null,
+				    "app_cabinet": null,
+				    "state": null,
+				    "remark": null,
+				    "is_active": true
+				},
+				{
+				    "id": "e7e1aa88-c007-44a1-88eb-1f901cd96f31",
+				    "cabinet_sn": "2345",
+				    "cabinet_name": "机柜3",
+				    "room_id": "914ae3a0-c486-4702-8f8c-3214a39af517",
+				    "cabinet_unit": null,
+				    "cabinet_dep": null,
+				    "cabinet_charger": null,
+				    "cabinet_type": null,
+				    "plan_weight": null,
+				    "app_weight": null,
+				    "plan_power": null,
+				    "app_power": null,
+				    "plan_u": null,
+				    "app_u": null,
+				    "plan_lightport": null,
+				    "app_lightport": null,
+				    "plan_netport": null,
+				    "app_netport": null,
+				    "plan_cabinet": null,
+				    "app_cabinet": null,
+				    "state": null,
+				    "remark": null,
+				    "is_active": true
+				}
+			    ]
+			}
+	POST:
+	url:/assets/cabinets/
+	example:
+		单个资源：
+			request: 
+				url :  http://127.0.0.1:5000/assets/cabinets/
+				body:
+				{
+				    "cabinet": {
+					"app_cabinet": 2,
+					"app_lightport": 1,
+					"app_netport": 3,
+					"app_power": 23,
+					"app_u": 4,
+					"app_weight": 23,
+					"cabinet_charger": "6bf72eb6-d3cd-441d-b411-3f00484d6b38",
+					"cabinet_dep": "808b9b19-0c96-4c36-bbac-aedd4cfb2729",
+					"cabinet_name": "机柜",
+					"cabinet_sn": "abcs",
+					"cabinet_type": "2271691c-96b2-44c1-9178-3cfbf36b9900",
+					"cabinet_unit": "8db5663c-17f6-4065-9b9c-e88d3a0a007e",
+					"is_active": true,
+					"plan_cabinet": 40,
+					"plan_lightport": 40,
+					"plan_netport": 40,
+					"plan_power": 400,
+					"plan_u": 6,
+					"plan_weight": 60,
+					"remark": "机柜",
+					"room_id": "914ae3a0-c486-4702-8f8c-3214a39af517"
+				    }
+				}
+			response:
+				{
+				    "cabinet": {
+					"id": "6f774c54-b0a4-48c8-a17d-4c41cde6ae46",
+					"cabinet_sn": "abcs",
+					"cabinet_name": "机柜",
+					"room_id": "914ae3a0-c486-4702-8f8c-3214a39af517",
+					"cabinet_unit": "8db5663c-17f6-4065-9b9c-e88d3a0a007e",
+					"cabinet_dep": "808b9b19-0c96-4c36-bbac-aedd4cfb2729",
+					"cabinet_charger": "6bf72eb6-d3cd-441d-b411-3f00484d6b38",
+					"cabinet_type": "2271691c-96b2-44c1-9178-3cfbf36b9900",
+					"plan_weight": 60,
+					"app_weight": 23,
+					"plan_power": 400,
+					"app_power": 23,
+					"plan_u": 6,
+					"app_u": 4,
+					"plan_lightport": 40,
+					"app_lightport": 1,
+					"plan_netport": 40,
+					"app_netport": 3,
+					"plan_cabinet": 40,
+					"app_cabinet": 2,
+					"state": null,
+					"remark": "机柜",
+					"is_active": true
+				    }
+				}
+		批量创建：
+			request: 
+				url :  http://127.0.0.1:5000/assets/cabinets/
+				body:
+				{
+				    "cabinets": [
+					{
+					    "cabinet_sn": "1234",
+					    "cabinet_name": "机柜2",
+					    "room_id": "914ae3a0-c486-4702-8f8c-3214a39af517",
+					    "is_active": true
+					},
+					{
+					    "cabinet_sn": "2345",
+					    "cabinet_name": "机柜3",
+					    "room_id": "914ae3a0-c486-4702-8f8c-3214a39af517",
+					    "is_active": true
+					}
+				    ]
+				}
+			response:
+				{
+				    "cabinets": [
+					{
+					    "id": "efead8df-7b49-4f2b-8d48-d0476d00cb03",
+					    "cabinet_sn": "1234",
+					    "cabinet_name": "机柜2",
+					    "room_id": "914ae3a0-c486-4702-8f8c-3214a39af517",
+					    "cabinet_unit": null,
+					    "cabinet_dep": null,
+					    "cabinet_charger": null,
+					    "cabinet_type": null,
+					    "plan_weight": null,
+					    "app_weight": null,
+					    "plan_power": null,
+					    "app_power": null,
+					    "plan_u": null,
+					    "app_u": null,
+					    "plan_lightport": null,
+					    "app_lightport": null,
+					    "plan_netport": null,
+					    "app_netport": null,
+					    "plan_cabinet": null,
+					    "app_cabinet": null,
+					    "state": null,
+					    "remark": null,
+					    "is_active": true
+					},
+					{
+					    "id": "e7e1aa88-c007-44a1-88eb-1f901cd96f31",
+					    "cabinet_sn": "2345",
+					    "cabinet_name": "机柜3",
+					    "room_id": "914ae3a0-c486-4702-8f8c-3214a39af517",
+					    "cabinet_unit": null,
+					    "cabinet_dep": null,
+					    "cabinet_charger": null,
+					    "cabinet_type": null,
+					    "plan_weight": null,
+					    "app_weight": null,
+					    "plan_power": null,
+					    "app_power": null,
+					    "plan_u": null,
+					    "app_u": null,
+					    "plan_lightport": null,
+					    "app_lightport": null,
+					    "plan_netport": null,
+					    "app_netport": null,
+					    "plan_cabinet": null,
+					    "app_cabinet": null,
+					    "state": null,
+					    "remark": null,
+					    "is_active": true
+					}
+				    ]
+				}
+	DELETE 
+	url: /assets/cabinets/uuid 
+	example: 
+		request: http://127.0.0.1:5000/assets/cabinets/6f774c54-b0a4-48c8-a17d-4c41cde6ae46
+		response: status 204
+	PUT:
+        url:/assets/cabinets/uuid
+        example: 
+		request: 
+			url :  http://127.0.0.1:5000/assets/cabinets/e7e1aa88-c007-44a1-88eb-1f901cd96f31
+			body:
+			{
+			    "cabinet": {
+				"cabinet_sn": "2345_new",
+				"cabinet_name": "机柜3_更新",
+				"room_id": "914ae3a0-c486-4702-8f8c-3214a39af517",
+				"cabinet_unit": "2d02611d-1081-4f48-9c04-4a98584ea237",
+				"cabinet_dep": "edbd6785-b1d5-4340-9f4d-f21de8d825e2",
+				"cabinet_charger": "73ee3743-1f1a-4988-899a-8d5e8e8ae17e",
+				"cabinet_type": "2271691c-96b2-44c1-9178-3cfbf36b9900",
+				"plan_weight": 54,
+				"app_weight": 34,
+				"plan_power": 543,
+				"app_power": 212,
+				"plan_u": 6,
+				"app_u": 3,
+				"plan_lightport": 16,
+				"app_lightport": 3,
+				"plan_netport": 24,
+				"app_netport": 21,
+				"plan_cabinet": 6,
+				"app_cabinet": 3,
+				"state": "Active",
+				"remark": "更新机柜信息",
+				"is_active": true
+			    }
+			}
+		response:
+			{
+			    "cabinet": {
+				"id": "e7e1aa88-c007-44a1-88eb-1f901cd96f31",
+				"cabinet_sn": "2345_new",
+				"cabinet_name": "机柜3_更新",
+				"room_id": "914ae3a0-c486-4702-8f8c-3214a39af517",
+				"cabinet_unit": "2d02611d-1081-4f48-9c04-4a98584ea237",
+				"cabinet_dep": "edbd6785-b1d5-4340-9f4d-f21de8d825e2",
+				"cabinet_charger": "73ee3743-1f1a-4988-899a-8d5e8e8ae17e",
+				"cabinet_type": "2271691c-96b2-44c1-9178-3cfbf36b9900",
+				"plan_weight": 54,
+				"app_weight": 34,
+				"plan_power": 543,
+				"app_power": 212,
+				"plan_u": 6,
+				"app_u": 3,
+				"plan_lightport": 16,
+				"app_lightport": 3,
+				"plan_netport": 24,
+				"app_netport": 21,
+				"plan_cabinet": 6,
+				"app_cabinet": 3,
+				"state": "Active",
+				"remark": "更新机柜信息",
+				"is_active": true
+			    }
+			}
+
+机柜U位(cabinet_u)：
+	GET: show
+	url: /assets/cabinet_u/uuid 
+	example:
+		request:  http://127.0.0.1:5000/assets/cabinet_u/21ce5206-2ac5-4248-99d1-5bd0ea8a2fb7
+		response: 
+			{
+			    "cabinet_u": {
+				"id": "21ce5206-2ac5-4248-99d1-5bd0ea8a2fb7",
+				"up": 1,
+				"cabinet_id": "eea113a2-02bc-4f28-a94f-79bef9129a94",
+				"remark": null,
+				"is_active": true
+			    }
+			}
+	GET:list
+	url:/assets/cabinet_u/
+	example:
+		request: http://127.0.0.1:5000/assets/cabinet_u/
+		responce:
+			{
+			    "cabinet_us": [
+				{
+				    "id": "21ce5206-2ac5-4248-99d1-5bd0ea8a2fb7",
+				    "up": 1,
+				    "cabinet_id": "eea113a2-02bc-4f28-a94f-79bef9129a94",
+				    "remark": null,
+				    "is_active": true
+				}
+			    ]
+			}
+	POST:
+	url:/assets/cabinet_u/
+	example:
+		单个资源：
+			request: 
+				url :  http://127.0.0.1:5000/assets/cabinet_u/
+				body:
+				{
+				    "cabinet_u": {
+					"up": 2,
+					"cabinet_id": "e7e1aa88-c007-44a1-88eb-1f901cd96f31",
+					"is_active": true
+				    }
+				}
+			response:
+				{
+				    "cabinet_u": {
+					"id": "c340ec1a-be6a-47ef-b2e6-229a81ad7669",
+					"up": 2,
+					"cabinet_id": "e7e1aa88-c007-44a1-88eb-1f901cd96f31",
+					"remark": null,
+					"is_active": true
+				    }
+				}
+		批量创建：
+			request: 
+				url :  http://127.0.0.1:5000/assets/cabinet_u/
+				body:
+				{
+				    "cabinet_us": [
+					{
+					    "up": 3,
+					    "cabinet_id": "eea113a2-02bc-4f28-a94f-79bef9129a94",
+					    "remark": "批量创建",
+					    "is_active": true
+					},
+					{
+					    "up": 4,
+					    "cabinet_id": "e7e1aa88-c007-44a1-88eb-1f901cd96f31",
+					    "is_active": true
+					}
+				    ]
+				}
+			response:
+				{
+				    "cabinet_us": [
+					{
+					    "id": "255b5fb9-edab-4275-9e31-64d42dc5a774",
+					    "up": 3,
+					    "cabinet_id": "eea113a2-02bc-4f28-a94f-79bef9129a94",
+					    "remark": "批量创建",
+					    "is_active": true
+					},
+					{
+					    "id": "f00893a1-b0dd-4d29-b7bf-01b1f20968b8",
+					    "up": 4,
+					    "cabinet_id": "e7e1aa88-c007-44a1-88eb-1f901cd96f31",
+					    "remark": null,
+					    "is_active": true
+					}
+				    ]
+				}
+	DELETE 
+	url: /assets/cabinet_u/uuid 
+	example: 
+		request: http://127.0.0.1:5000/assets/cabinet_u/f00893a1-b0dd-4d29-b7bf-01b1f20968b8
+		response: status 204
+	PUT:
+        url:/assets/cabinet_u/uuid
+        example: 
+		request: 
+			url :  http://127.0.0.1:5000/assets/cabinet_u/255b5fb9-edab-4275-9e31-64d42dc5a774
+			body:
+			{
+			    "cabinet_u": {
+				"up": 5,
+				"cabinet_id": "eea113a2-02bc-4f28-a94f-79bef9129a94",
+				"remark": "更新U位",
+				"is_active": false
+			    }
+			}
+		response:
+			{
+			    "cabinet_u": {
+				"id": "255b5fb9-edab-4275-9e31-64d42dc5a774",
+				"up": 5,
+				"cabinet_id": "eea113a2-02bc-4f28-a94f-79bef9129a94",
+				"remark": "更新U位",
+				"is_active": false
+			    }
+			}
+
+设备合同(devicecontracts)：
+	GET: show
+	url: /assets/devicecontracts/uuid 
+	example:
+		request:  http://127.0.0.1:5000/assets/cabinet_u/21ce5206-2ac5-4248-99d1-5bd0ea8a2fb7
+		response: 
+			{
+			    "cabinet_u": {
+				"id": "21ce5206-2ac5-4248-99d1-5bd0ea8a2fb7",
+				"up": 1,
+				"cabinet_id": "eea113a2-02bc-4f28-a94f-79bef9129a94",
+				"remark": null,
+				"is_active": true
+			    }
+			}
+	GET:list
+	url:/assets/devicecontracts/
+	example:
+		request: http://127.0.0.1:5000/assets/devicecontracts/
+		responce:
+			{
+			    "device_contracts": [
+				{
+				    "id": "0b0b449a-b4a4-444c-8b3a-eba1a7449791",
+				    "contract_order": "cn001",
+				    "contract_name": "ed",
+				    "contract_price": null,
+				    "cur_price": null,
+				    "start_date": null,
+				    "end_date": null,
+				    "state": null,
+				    "content": null,
+				    "remark": null
+				},
+				{
+				    "id": "04441d60-c34b-4f30-b38e-3411da5422b1",
+				    "contract_order": "cn0012",
+				    "contract_name": "ed",
+				    "contract_price": 1200,
+				    "cur_price": 2300,
+				    "start_date": "2018-01-01",
+				    "end_date": "2019-01-01",
+				    "state": "Actice",
+				    "content": null,
+				    "remark": null
+				}
+			    ]
+			}
+	POST:
+	url:/assets/devicecontracts/
+	example:
+		单个资源：
+			request: 
+				url :  http://127.0.0.1:5000/assets/devicecontracts/
+				body:
+				{
+				    "device_contract": {
+					"contract_order": "ct123",
+					"contract_name": "设备合同",
+					"contract_price": 1480,
+					"cur_price": 234,
+					"start_date": "2015-9-9",
+					"end_date": "2017-8-31",
+					"state": "Expired"
+				    }
+				}
+			response:
+				{
+				    "device_contract": {
+					"id": "bff97abf-680e-4604-bca1-e2fa413ce559",
+					"contract_order": "ct123",
+					"contract_name": "设备合同",
+					"contract_price": 1480,
+					"cur_price": 234,
+					"start_date": "2015-09-09",
+					"end_date": "2017-08-31",
+					"state": "Expired",
+					"content": null,
+					"remark": null
+				    }
+				}
+		批量创建：
+			request: 
+				url :  http://127.0.0.1:5000/assets/devicecontracts/
+				body:
+				{
+				    "device_contracts": [
+					{
+					    "contract_order": "cn0012",
+					    "contract_name": "ed",
+					    "contract_price": 1200,
+					    "cur_price": 2300,
+					    "start_date": "2018-1-1",
+					    "end_date": "2019-1-1",
+					    "state": "Actice"
+					}
+				    ]
+				}
+			response:
+				{
+				    "device_contracts": [
+					{
+					    "id": "04441d60-c34b-4f30-b38e-3411da5422b1",
+					    "contract_order": "cn0012",
+					    "contract_name": "ed",
+					    "contract_price": 1200,
+					    "cur_price": 2300,
+					    "start_date": "2018-01-01",
+					    "end_date": "2019-01-01",
+					    "state": "Actice",
+					    "content": null,
+					    "remark": null
+					}
+				    ]
+				}
+	DELETE 
+	url: /assets/devicecontracts/uuid 
+	example: 
+		request: http://127.0.0.1:5000/assets/devicecontracts/04441d60-c34b-4f30-b38e-3411da5422b1
+		response: status 204
+	PUT:
+        url:/assets/devicecontracts/uuid
+        example: 
+		request: 
+			url :  http://127.0.0.1:5000/assets/devicecontracts/bff97abf-680e-4604-bca1-e2fa413ce559
+			body:
+			{
+			    "device_contract": {
+				"contract_order": "ct123",
+				"contract_name": "设备合同_更新",
+				"contract_price": 1480,
+				"cur_price": 234,
+				"start_date": "2018-03-24",
+				"end_date": "2020-10-21",
+				"state": "Active",
+				"content": "renewed device contract",
+				"remark": null
+			    }
+			}
+		response:
+			{
+			    "device_contract": {
+				"id": "bff97abf-680e-4604-bca1-e2fa413ce559",
+				"contract_order": "ct123",
+				"contract_name": "设备合同_更新",
+				"contract_price": 1480,
+				"cur_price": 234,
+				"start_date": "2018-03-24",
+				"end_date": "2020-10-21",
+				"state": "Active",
+				"content": "renewed device contract",
+				"remark": null
+			    }
+			}
+
+维保合同表(contractsecures)：
+	GET: show
+	url: /assets/contractsecures/uuid 
+	example:
+		request:  http://127.0.0.1:5000/assets/contractsecures/cbbd4f35-08c4-48c4-88fa-329e69a45487
+		response: 
+			{
+			    "contract_secure": {
+				"id": "cbbd4f35-08c4-48c4-88fa-329e69a45487",
+				"contract_order": "sdf",
+				"contract_name": "ed",
+				"secure_price": null,
+				"secure_type": null,
+				"vendor": null,
+				"service_type": null,
+				"service_level": null,
+				"state": null,
+				"content": null,
+				"start_date": null,
+				"end_date": null,
+				"remark": null,
+				"is_active": true
+			    }
+			}
+	GET:list
+	url:/assets/contractsecures/
+	example:
+		request: http://127.0.0.1:5000/assets/contractsecures/
+		responce:
+			{
+			    "contract_secures": [
+				{
+				    "id": "c4daebeb-a24d-4cc9-a860-4f8813e34905",
+				    "contract_order": "wc001",
+				    "contract_name": "ed",
+				    "secure_price": null,
+				    "secure_type": null,
+				    "vendor": null,
+				    "service_type": null,
+				    "service_level": null,
+				    "state": null,
+				    "content": null,
+				    "start_date": null,
+				    "end_date": null,
+				    "remark": null,
+				    "is_active": true
+				},
+				{
+				    "id": "cbbd4f35-08c4-48c4-88fa-329e69a45487",
+				    "contract_order": "sdf",
+				    "contract_name": "ed",
+				    "secure_price": null,
+				    "secure_type": null,
+				    "vendor": null,
+				    "service_type": null,
+				    "service_level": null,
+				    "state": null,
+				    "content": null,
+				    "start_date": null,
+				    "end_date": null,
+				    "remark": null,
+				    "is_active": true
+				}
+			    ]
+			}
+	POST:
+	url:/assets/contractsecures/
+	example:
+		单个资源：
+			request: 
+				url :  http://127.0.0.1:5000/assets/contractsecures/
+				body:
+				{
+				    "contract_secure": {
+					"contract_order": "sc0123",
+					"contract_name": "secure_contract",
+					"secure_price": 123,
+					"secure_type": "e25b2826-0da0-4e0e-9ba3-de3f59742675",
+					"vendor": "1e8110c8-c9d9-4d76-b6ae-c0e2ae505134",
+					"service_type": "fe43f2b4-4382-4bd7-8121-6cf4256625c6",
+					"service_level": "716cce3e-48f8-4897-af1f-35512b3af252",
+					"state": "Active",
+					"content": null,
+					"start_date": "2011-03-05",
+					"end_date": "2013-03-05"
+				    }
+				}
+			response:
+				{
+				    "contract_secure": {
+					"id": "a0d54e2b-ac04-4c9f-becc-d700b6622a2b",
+					"contract_order": "sc0123",
+					"contract_name": "secure_contract",
+					"secure_price": 123,
+					"secure_type": "e25b2826-0da0-4e0e-9ba3-de3f59742675",
+					"vendor": "1e8110c8-c9d9-4d76-b6ae-c0e2ae505134",
+					"service_type": "fe43f2b4-4382-4bd7-8121-6cf4256625c6",
+					"service_level": "716cce3e-48f8-4897-af1f-35512b3af252",
+					"state": "Active",
+					"content": null,
+					"start_date": "2011-03-05",
+					"end_date": "2013-03-05",
+					"remark": null,
+					"is_active": true
+				    }
+				}
+		批量创建：
+			request: 
+				url :  http://127.0.0.1:5000/assets/contractsecures/
+				body:
+				{
+				    "contract_secures": [
+					{
+					    "contract_order": "sc01234",
+					    "contract_name": "secure_contract1",
+					    "secure_price": 123,
+					    "secure_type": "e25b2826-0da0-4e0e-9ba3-de3f59742675",
+					    "vendor": "1e8110c8-c9d9-4d76-b6ae-c0e2ae505134",
+					    "service_type": "fe43f2b4-4382-4bd7-8121-6cf4256625c6",
+					    "service_level": "716cce3e-48f8-4897-af1f-35512b3af252",
+					    "state": "Active",
+					    "content": null,
+					    "start_date": "2011-03-05",
+					    "end_date": "2013-03-05",
+					    "remark": null,
+					    "is_active": false
+					},
+					{
+					    "contract_order": "sc01235",
+					    "contract_name": "secure_contract2",
+					    "secure_price": 123,
+					    "secure_type": "e25b2826-0da0-4e0e-9ba3-de3f59742675",
+					    "vendor": "1e8110c8-c9d9-4d76-b6ae-c0e2ae505134",
+					    "service_type": "fe43f2b4-4382-4bd7-8121-6cf4256625c6",
+					    "service_level": "716cce3e-48f8-4897-af1f-35512b3af252",
+					    "state": "Active",
+					    "content": null,
+					    "start_date": "2011-03-05",
+					    "end_date": "2013-03-05",
+					    "remark": "批量创建",
+					    "is_active": true
+					}
+				    ]
+				}
+			response:
+				{
+				    "contract_secures": [
+					{
+					    "id": "5161df1e-c14b-43cd-aa2e-1efde04ed3cd",
+					    "contract_order": "sc01234",
+					    "contract_name": "secure_contract1",
+					    "secure_price": 123,
+					    "secure_type": "e25b2826-0da0-4e0e-9ba3-de3f59742675",
+					    "vendor": "1e8110c8-c9d9-4d76-b6ae-c0e2ae505134",
+					    "service_type": "fe43f2b4-4382-4bd7-8121-6cf4256625c6",
+					    "service_level": "716cce3e-48f8-4897-af1f-35512b3af252",
+					    "state": "Active",
+					    "content": null,
+					    "start_date": "2011-03-05",
+					    "end_date": "2013-03-05",
+					    "remark": null,
+					    "is_active": false
+					},
+					{
+					    "id": "38e32d20-6af6-4427-9648-70b0f51e8521",
+					    "contract_order": "sc01235",
+					    "contract_name": "secure_contract2",
+					    "secure_price": 123,
+					    "secure_type": "e25b2826-0da0-4e0e-9ba3-de3f59742675",
+					    "vendor": "1e8110c8-c9d9-4d76-b6ae-c0e2ae505134",
+					    "service_type": "fe43f2b4-4382-4bd7-8121-6cf4256625c6",
+					    "service_level": "716cce3e-48f8-4897-af1f-35512b3af252",
+					    "state": "Active",
+					    "content": null,
+					    "start_date": "2011-03-05",
+					    "end_date": "2013-03-05",
+					    "remark": "批量创建",
+					    "is_active": true
+					}
+				    ]
+				}
+	DELETE 
+	url: /assets/contractsecures/uuid 
+	example: 
+		request: http://127.0.0.1:5000/assets/contractsecures/a0d54e2b-ac04-4c9f-becc-d700b6622a2b
+		response: status 204
+	PUT:
+        url:/assets/contractsecures/uuid
+        example: 
+		request: 
+			url :  http://127.0.0.1:5000/assets/contractsecures/5161df1e-c14b-43cd-aa2e-1efde04ed3cd
+			body:
+			{
+			    "contract_secure": {
+				"contract_order": "sc01234",
+				"contract_name": "secure_contract1_renewed",
+				"secure_price": 1233,
+				"secure_type": "e25b2826-0da0-4e0e-9ba3-de3f59742675",
+				"vendor": "1e8110c8-c9d9-4d76-b6ae-c0e2ae505134",
+				"service_type": "fe43f2b4-4382-4bd7-8121-6cf4256625c6",
+				"service_level": "716cce3e-48f8-4897-af1f-35512b3af252",
+				"state": "Active",
+				"content": "更新维保合同",
+				"start_date": "2011-03-12",
+				"end_date": "2013-03-09",
+				"remark": "更新维保合同",
+				"is_active": true
+			    }
+			}
+		response:
+			{
+			    "contract_secure": {
+				"id": "5161df1e-c14b-43cd-aa2e-1efde04ed3cd",
+				"contract_order": "sc01234",
+				"contract_name": "secure_contract1_renewed",
+				"secure_price": 1233,
+				"secure_type": "e25b2826-0da0-4e0e-9ba3-de3f59742675",
+				"vendor": "1e8110c8-c9d9-4d76-b6ae-c0e2ae505134",
+				"service_type": "fe43f2b4-4382-4bd7-8121-6cf4256625c6",
+				"service_level": "716cce3e-48f8-4897-af1f-35512b3af252",
+				"state": "Active",
+				"content": "更新维保合同",
+				"start_date": "2011-03-12",
+				"end_date": "2013-03-09",
+				"remark": "更新维保合同",
+				"is_active": true
+			    }
+			}
+
+设备(devices)：
+	GET: show
+	url: /assets/devices/uuid 
+	example:
+		request:  http://127.0.0.1:5000/assets/devices/4e5a1c1e-3309-4162-919b-252f2d1a0445
+		response: 
+			{
+			    "device": {
+				"app": "aa",
+				"case_id": null,
+				"datacenter_id": null,
+				"device_charger": "aa",
+				"device_contract_id": "0b0b449a-b4a4-444c-8b3a-eba1a7449791",
+				"device_create_time": "Sun, 01 Jul 2018 00:00:00 GMT",
+				"device_destory_time": "Fri, 02 Feb 2018 00:00:00 GMT",
+				"device_model": "37d5ce41-6de8-41e2-8460-b1618bd85dd5",
+				"device_name": "aa",
+				"device_origin": "aa",
+				"device_type": "4ec0b732-6884-4abb-815f-e4d7178fca29",
+				"id": "4e5a1c1e-3309-4162-919b-252f2d1a0445",
+				"is_active": true,
+				"is_case": true,
+				"mac": "CE",
+				"manager_mode": "aa",
+				"net_area_id": null,
+				"remark": "qww",
+				"sn": "234",
+				"start_u_id": "21ce5206-2ac5-4248-99d1-5bd0ea8a2fb7",
+				"u_high": 1,
+				"vendor": "1e8110c8-c9d9-4d76-b6ae-c0e2ae505134"
+			    }
+			}
+	GET:list
+	url:/assets/devices/
+	example:
+		request: http://127.0.0.1:5000/assets/devices/
+		responce:
+			{
+			    "devices": [
+				{
+				    "app": "aa",
+				    "case_id": null,
+				    "datacenter_id": null,
+				    "device_charger": "aa",
+				    "device_contract_id": "0b0b449a-b4a4-444c-8b3a-eba1a7449791",
+				    "device_create_time": "Sun, 01 Jul 2018 00:00:00 GMT",
+				    "device_destory_time": "Fri, 02 Feb 2018 00:00:00 GMT",
+				    "device_model": "37d5ce41-6de8-41e2-8460-b1618bd85dd5",
+				    "device_name": "aa",
+				    "device_origin": "aa",
+				    "device_type": "4ec0b732-6884-4abb-815f-e4d7178fca29",
+				    "id": "4e5a1c1e-3309-4162-919b-252f2d1a0445",
+				    "is_active": true,
+				    "is_case": true,
+				    "mac": "CE",
+				    "manager_mode": "aa",
+				    "net_area_id": null,
+				    "remark": "qww",
+				    "sn": "234",
+				    "start_u_id": "21ce5206-2ac5-4248-99d1-5bd0ea8a2fb7",
+				    "u_high": 1,
+				    "vendor": "1e8110c8-c9d9-4d76-b6ae-c0e2ae505134"
+				},
+				{
+				    "app": "aa",
+				    "case_id": null,
+				    "datacenter_id": null,
+				    "device_charger": "aa",
+				    "device_contract_id": "0b0b449a-b4a4-444c-8b3a-eba1a7449791",
+				    "device_create_time": "Sun, 01 Jul 2018 00:00:00 GMT",
+				    "device_destory_time": "Fri, 02 Feb 2018 00:00:00 GMT",
+				    "device_model": "37d5ce41-6de8-41e2-8460-b1618bd85dd5",
+				    "device_name": "aa",
+				    "device_origin": "aa",
+				    "device_type": "4ec0b732-6884-4abb-815f-e4d7178fca29",
+				    "id": "743cde62-442b-4906-89bb-8c81e20f17aa",
+				    "is_active": true,
+				    "is_case": true,
+				    "mac": "2D3",
+				    "manager_mode": "aa",
+				    "net_area_id": null,
+				    "remark": "qww",
+				    "sn": "345",
+				    "start_u_id": "21ce5206-2ac5-4248-99d1-5bd0ea8a2fb7",
+				    "u_high": 1,
+				    "vendor": "1e8110c8-c9d9-4d76-b6ae-c0e2ae505134"
+				}
+			    ]
+			}
+	POST:
+	url:/assets/devices/
+	example:
+		单个资源：
+			request: 
+				url :  http://127.0.0.1:5000/assets/devices/
+				body:
+				{
+				    "device": {
+					"app": "a2fd6b52-7d19-4051-b0c1-5610c83c44e9",
+					"case_id": null,
+					"datacenter_id": "531f3dc5-bd39-494c-b7f2-208447644476",
+					"device_charger": "bd1b4d84-0c3c-4151-bf58-1617dd2ba844",
+					"device_contract_id": "0b0b449a-b4a4-444c-8b3a-eba1a7449791",
+					"device_create_time": "2018-1-1",
+					"device_destory_time": "2018-9-9",
+					"device_model": "37d5ce41-6de8-41e2-8460-b1618bd85dd5",
+					"device_name": "设备1",
+					"device_origin": "购买",
+					"device_type": "4ec0b732-6884-4abb-815f-e4d7178fca29",
+					"is_active": true,
+					"is_case": false,
+					"mac": "C8-3D-D4-F4-76-47",
+					"manager_mode": "b02f3012-b1b9-4996-9d49-683fd36a9760",
+					"net_area_id": "6f41e4a8-47e7-4866-b79a-5c92c6a4d581",
+					"remark": "qww",
+					"sn": "d001",
+					"start_u_id": "21ce5206-2ac5-4248-99d1-5bd0ea8a2fb7",
+					"u_high": 1,
+					"vendor": "1e8110c8-c9d9-4d76-b6ae-c0e2ae505134"
+				    }
+				}
+			response:
+				{
+				    "device": {
+					"app": "a2fd6b52-7d19-4051-b0c1-5610c83c44e9",
+					"case_id": null,
+					"datacenter_id": "531f3dc5-bd39-494c-b7f2-208447644476",
+					"device_charger": "bd1b4d84-0c3c-4151-bf58-1617dd2ba844",
+					"device_contract_id": "0b0b449a-b4a4-444c-8b3a-eba1a7449791",
+					"device_create_time": "Mon, 01 Jan 2018 00:00:00 GMT",
+					"device_destory_time": "Sun, 09 Sep 2018 00:00:00 GMT",
+					"device_model": "37d5ce41-6de8-41e2-8460-b1618bd85dd5",
+					"device_name": "设备1",
+					"device_origin": "购买",
+					"device_type": "4ec0b732-6884-4abb-815f-e4d7178fca29",
+					"id": "6785ff38-5cc7-4280-82b5-357df8792b4a",
+					"is_active": true,
+					"is_case": false,
+					"mac": "C8-3D-D4-F4-76-47",
+					"manager_mode": "b02f3012-b1b9-4996-9d49-683fd36a9760",
+					"net_area_id": "6f41e4a8-47e7-4866-b79a-5c92c6a4d581",
+					"remark": "qww",
+					"sn": "d001",
+					"start_u_id": "21ce5206-2ac5-4248-99d1-5bd0ea8a2fb7",
+					"u_high": 1,
+					"vendor": "1e8110c8-c9d9-4d76-b6ae-c0e2ae505134"
+				    }
+				}
+		批量创建：
+			request: 
+				url :  http://127.0.0.1:5000/assets/cabinet_u/
+				body:
+					{
+					    "devices":[
+					　　　　{
+					　　　　　　"case_id":"6785ff38-5cc7-4280-82b5-357df8792b4a",
+					　　　　　　"device_create_time":"2018-1-1",
+					　　　　　　"device_destory_time":"2018-9-9",
+					　　　　　　"device_model":"37d5ce41-6de8-41e2-8460-b1618bd85dd5",
+					　　　　　　"device_name":"批量设备1",
+					　　　　　　"device_origin":"购买",
+					　　　　　　"device_type":"4ec0b732-6884-4abb-815f-e4d7178fca29",
+					　　　　　　"is_active":true,
+					　　　　　　"is_case":false,
+					　　　　　　"manager_mode":"b02f3012-b1b9-4996-9d49-683fd36a9760",
+					　　　　　　"net_area_id":"6f41e4a8-47e7-4866-b79a-5c92c6a4d581",
+					　　　　　　"remark":"批量设备1",
+					　　　　　　"sn":"bd001",
+					　　　　　　"mac":"E1-C1-D1-F3-76-36",
+					　　　　　　"start_u_id":"21ce5206-2ac5-4248-99d1-5bd0ea8a2fb7",
+					　　　　　　"u_high":1,
+					　　　　　　"vendor":"1e8110c8-c9d9-4d76-b6ae-c0e2ae505134"
+					　　　　},
+					　　　　{
+					　　　　　　"device_name":"设备1",
+					　　　　　　"mac":"B2-E1-D4-F4-76-24",
+					　　　　　　"sn":"bd002"
+					　　　　}
+					　　]
+					}
+			response:
+				{
+				    "devices": [
+					{
+					    "app": null,
+					    "case_id": "6785ff38-5cc7-4280-82b5-357df8792b4a",
+					    "datacenter_id": null,
+					    "device_charger": null,
+					    "device_contract_id": null,
+					    "device_create_time": "Mon, 01 Jan 2018 00:00:00 GMT",
+					    "device_destory_time": "Sun, 09 Sep 2018 00:00:00 GMT",
+					    "device_model": "37d5ce41-6de8-41e2-8460-b1618bd85dd5",
+					    "device_name": "批量设备1",
+					    "device_origin": "购买",
+					    "device_type": "4ec0b732-6884-4abb-815f-e4d7178fca29",
+					    "id": "7aba622b-9862-4172-b733-88e18bac2fbe",
+					    "is_active": true,
+					    "is_case": false,
+					    "mac": "E1-C1-D1-F3-76-36",
+					    "manager_mode": "b02f3012-b1b9-4996-9d49-683fd36a9760",
+					    "net_area_id": "6f41e4a8-47e7-4866-b79a-5c92c6a4d581",
+					    "remark": "批量设备1",
+					    "sn": "bd001",
+					    "start_u_id": "21ce5206-2ac5-4248-99d1-5bd0ea8a2fb7",
+					    "u_high": 1,
+					    "vendor": "1e8110c8-c9d9-4d76-b6ae-c0e2ae505134"
+					},
+					{
+					    "app": null,
+					    "case_id": null,
+					    "datacenter_id": null,
+					    "device_charger": null,
+					    "device_contract_id": null,
+					    "device_create_time": null,
+					    "device_destory_time": null,
+					    "device_model": null,
+					    "device_name": "设备1",
+					    "device_origin": null,
+					    "device_type": null,
+					    "id": "199f9677-e34e-4648-ad9d-abef8325ddf1",
+					    "is_active": true,
+					    "is_case": false,
+					    "mac": "B2-E1-D4-F4-76-24",
+					    "manager_mode": null,
+					    "net_area_id": null,
+					    "remark": null,
+					    "sn": "bd002",
+					    "start_u_id": null,
+					    "u_high": 1,
+					    "vendor": null
+					}
+				    ]
+				}
+	DELETE 
+	url: /assets/devices/uuid 
+	example: 
+		request: http://127.0.0.1:5000/assets/devices/199f9677-e34e-4648-ad9d-abef8325ddf1
+		response: status 204
+	PUT:
+        url:/assets/devices/uuid
+        example: 
+		request: 
+			url :  http://127.0.0.1:5000/assets/devices/6785ff38-5cc7-4280-82b5-357df8792b4a
+			body:
+			{
+			    "devices": [
+				{
+				    "app": "a2fd6b52-7d19-4051-b0c1-5610c83c44e9",
+				    "case_id": null,
+				    "datacenter_id": "531f3dc5-bd39-494c-b7f2-208447644476",
+				    "device_charger": "bd1b4d84-0c3c-4151-bf58-1617dd2ba844",
+				    "device_contract_id": "0b0b449a-b4a4-444c-8b3a-eba1a7449791",
+				    "device_create_time": "Mon, 01 Jan 2018 00:00:00 GMT",
+				    "device_destory_time": "Sun, 09 Sep 2018 00:00:00 GMT",
+				    "device_model": "37d5ce41-6de8-41e2-8460-b1618bd85dd5",
+				    "device_name": "设备1_更新",
+				    "device_origin": "购买",
+				    "device_type": "4ec0b732-6884-4abb-815f-e4d7178fca29",
+				    "id": "6785ff38-5cc7-4280-82b5-357df8792b4a",
+				    "is_active": true,
+				    "is_case": true,
+				    "mac": "C8-3D-D4-F4-76-47",
+				    "manager_mode": "b02f3012-b1b9-4996-9d49-683fd36a9760",
+				    "net_area_id": "6f41e4a8-47e7-4866-b79a-5c92c6a4d581",
+				    "remark": "更新设备",
+				    "sn": "d001",
+				    "start_u_id": "21ce5206-2ac5-4248-99d1-5bd0ea8a2fb7",
+				    "u_high": 1,
+				    "vendor": "1e8110c8-c9d9-4d76-b6ae-c0e2ae505134"
+				}
+			    ]
+			}
+		response:
+			{
+			    "devices": [
+				{
+				    "app": "a2fd6b52-7d19-4051-b0c1-5610c83c44e9",
+				    "case_id": null,
+				    "datacenter_id": "531f3dc5-bd39-494c-b7f2-208447644476",
+				    "device_charger": "bd1b4d84-0c3c-4151-bf58-1617dd2ba844",
+				    "device_contract_id": "0b0b449a-b4a4-444c-8b3a-eba1a7449791",
+				    "device_create_time": "Mon, 01 Jan 2018 00:00:00 GMT",
+				    "device_destory_time": "Sun, 09 Sep 2018 00:00:00 GMT",
+				    "device_model": "37d5ce41-6de8-41e2-8460-b1618bd85dd5",
+				    "device_name": "设备1",
+				    "device_origin": "购买",
+				    "device_type": "4ec0b732-6884-4abb-815f-e4d7178fca29",
+				    "id": "6785ff38-5cc7-4280-82b5-357df8792b4a",
+				    "is_active": true,
+				    "is_case": false,
+				    "mac": "C8-3D-D4-F4-76-47",
+				    "manager_mode": "b02f3012-b1b9-4996-9d49-683fd36a9760",
+				    "net_area_id": "6f41e4a8-47e7-4866-b79a-5c92c6a4d581",
+				    "remark": "qww",
+				    "sn": "d001",
+				    "start_u_id": "21ce5206-2ac5-4248-99d1-5bd0ea8a2fb7",
+				    "u_high": 1,
+				    "vendor": "1e8110c8-c9d9-4d76-b6ae-c0e2ae505134"
+				}
+			    ]
+			}
+
+设备密码(passwds)：
+	GET: show
+	url: /assets/passwds/uuid 
+	example:
+		request:  http://127.0.0.1:5000/assets/passwds/3feb7302-37eb-4db1-a72d-53217515cd01
+		response: 
+			{
+			    "device_password": {
+				"device_id": "7aba622b-9862-4172-b733-88e18bac2fbe",
+				"id": "3feb7302-37eb-4db1-a72d-53217515cd01",
+				"password": "passwd",
+				"remark": "设备密码",
+				"used": "default",
+				"username": "uname"
+			    }
+			}
+	GET:list
+	url:/assets/passwds/
+	example:
+		request: http://127.0.0.1:5000/assets/cabinets/
+		responce:
+			{
+			    "cabinets": [
+				{
+				    "id": "eea113a2-02bc-4f28-a94f-79bef9129a94",
+				    "cabinet_sn": "abc",
+				    "cabinet_name": "机柜1",
+				    "room_id": "914ae3a0-c486-4702-8f8c-3214a39af517",
+				    "cabinet_unit": null,
+				    "cabinet_dep": null,
+				    "cabinet_charger": null,
+				    "cabinet_type": null,
+				    "plan_weight": null,
+				    "app_weight": null,
+				    "plan_power": null,
+				    "app_power": null,
+				    "plan_u": null,
+				    "app_u": null,
+				    "plan_lightport": null,
+				    "app_lightport": null,
+				    "plan_netport": null,
+				    "app_netport": null,
+				    "plan_cabinet": null,
+				    "app_cabinet": null,
+				    "state": null,
+				    "remark": null,
+				    "is_active": true
+				},
+				{
+				    "id": "6f774c54-b0a4-48c8-a17d-4c41cde6ae46",
+				    "cabinet_sn": "abcs",
+				    "cabinet_name": "机柜",
+				    "room_id": "914ae3a0-c486-4702-8f8c-3214a39af517",
+				    "cabinet_unit": "8db5663c-17f6-4065-9b9c-e88d3a0a007e",
+				    "cabinet_dep": "808b9b19-0c96-4c36-bbac-aedd4cfb2729",
+				    "cabinet_charger": "6bf72eb6-d3cd-441d-b411-3f00484d6b38",
+				    "cabinet_type": "2271691c-96b2-44c1-9178-3cfbf36b9900",
+				    "plan_weight": 60,
+				    "app_weight": 23,
+				    "plan_power": 400,
+				    "app_power": 23,
+				    "plan_u": 6,
+				    "app_u": 4,
+				    "plan_lightport": 40,
+				    "app_lightport": 1,
+				    "plan_netport": 40,
+				    "app_netport": 3,
+				    "plan_cabinet": 40,
+				    "app_cabinet": 2,
+				    "state": null,
+				    "remark": "机柜",
+				    "is_active": true
+				},
+				{
+				    "id": "efead8df-7b49-4f2b-8d48-d0476d00cb03",
+				    "cabinet_sn": "1234",
+				    "cabinet_name": "机柜2",
+				    "room_id": "914ae3a0-c486-4702-8f8c-3214a39af517",
+				    "cabinet_unit": null,
+				    "cabinet_dep": null,
+				    "cabinet_charger": null,
+				    "cabinet_type": null,
+				    "plan_weight": null,
+				    "app_weight": null,
+				    "plan_power": null,
+				    "app_power": null,
+				    "plan_u": null,
+				    "app_u": null,
+				    "plan_lightport": null,
+				    "app_lightport": null,
+				    "plan_netport": null,
+				    "app_netport": null,
+				    "plan_cabinet": null,
+				    "app_cabinet": null,
+				    "state": null,
+				    "remark": null,
+				    "is_active": true
+				},
+				{
+				    "id": "e7e1aa88-c007-44a1-88eb-1f901cd96f31",
+				    "cabinet_sn": "2345",
+				    "cabinet_name": "机柜3",
+				    "room_id": "914ae3a0-c486-4702-8f8c-3214a39af517",
+				    "cabinet_unit": null,
+				    "cabinet_dep": null,
+				    "cabinet_charger": null,
+				    "cabinet_type": null,
+				    "plan_weight": null,
+				    "app_weight": null,
+				    "plan_power": null,
+				    "app_power": null,
+				    "plan_u": null,
+				    "app_u": null,
+				    "plan_lightport": null,
+				    "app_lightport": null,
+				    "plan_netport": null,
+				    "app_netport": null,
+				    "plan_cabinet": null,
+				    "app_cabinet": null,
+				    "state": null,
+				    "remark": null,
+				    "is_active": true
+				}
+			    ]
+			}
+	POST:
+	url:/assets/passwds/
+	example:
+		单个资源：
+			request: 
+				url :  http://127.0.0.1:5000/assets/passwds/
+				body:
+				{
+					"device_password":{
+						"username": "uname",
+						"password": "passwd",
+						"device_id": "7aba622b-9862-4172-b733-88e18bac2fbe",
+						"used": "default",
+						"remark": "设备密码"
+					}
+				}
+			response:
+				{
+				    "device_password": {
+					"device_id": "7aba622b-9862-4172-b733-88e18bac2fbe",
+					"id": "3feb7302-37eb-4db1-a72d-53217515cd01",
+					"password": "passwd",
+					"remark": "设备密码",
+					"used": "default",
+					"username": "uname"
+				    }
+				}
+		批量创建：
+			request: 
+				url :  http://127.0.0.1:5000/assets/passwds/
+				body:
+				{
+				    "device_passwords": [
+					{
+					    "device_id": "7aba622b-9862-4172-b733-88e18bac2fbe",
+					    "password": "root",
+					    "remark": "设备密码2",
+					    "used": "default",
+					    "username": "root"
+					},
+					{
+					    "device_id": "7aba622b-9862-4172-b733-88e18bac2fbe",
+					    "password": "admin",
+					    "remark": "设备密码3",
+					    "used": "default",
+					    "username": "admin"
+					}
+				    ]
+				}
+			response:
+				{
+				    "device_passwords": [
+					{
+					    "device_id": "7aba622b-9862-4172-b733-88e18bac2fbe",
+					    "id": "1c1e4b7e-cbf1-4355-8e8a-735eedbda273",
+					    "password": "root",
+					    "remark": "设备密码2",
+					    "used": "default",
+					    "username": "root"
+					},
+					{
+					    "device_id": "7aba622b-9862-4172-b733-88e18bac2fbe",
+					    "id": "3b1be54e-6486-4c0b-9b1c-b38cab1f8ec5",
+					    "password": "admin",
+					    "remark": "设备密码3",
+					    "used": "default",
+					    "username": "admin"
+					}
+				    ]
+				}
+	DELETE 
+	url: /assets/passwds/uuid 
+	example: 
+		request: http://127.0.0.1:5000/assets/passwds/3feb7302-37eb-4db1-a72d-53217515cd01
+		response: status 204
+	PUT:
+        url:/assets/passwds/uuid
+        example: 
+		request: 
+			url :  http://127.0.0.1:5000/assets/passwds/3b1be54e-6486-4c0b-9b1c-b38cab1f8ec5
+			body:
+			{
+			    "device_password": {
+				"device_id": "7aba622b-9862-4172-b733-88e18bac2fbe",
+				"password": "adminadmin",
+				"remark": "更新密码",
+				"used": "default",
+				"username": "admin1"
+			    }
+			}
+		response:
+			{
+			    "device_password": {
+				"device_id": "7aba622b-9862-4172-b733-88e18bac2fbe",
+				"id": "3b1be54e-6486-4c0b-9b1c-b38cab1f8ec5",
+				"password": "adminadmin",
+				"remark": "更新密码",
+				"used": "default",
+				"username": "admin1"
+			    }
+			}

@@ -1,0 +1,12 @@
+[Unit]
+Description=Gunicorn instance to server flask assets
+After=network.target
+[Service]
+User=root
+Group=root
+WorkingDirectory=/opt/flask_project/assets
+Environment="PATH=/opt/flask_project/assets/venv/bin"
+#ExecStart=/opt/flask_project/assets/venv/bin/gunicorn --workers 4 --bind 127.0.0.1:8000 wsgi:application
+ExecStart=/opt/flask_project/assets/venv/bin/gunicorn --workers 4 --bind 127.0.0.1:8000 wsgi:application --log-level debug --log-file /var/log/assets/assets.log
+[Install]
+WantedBy=multi-user.target
