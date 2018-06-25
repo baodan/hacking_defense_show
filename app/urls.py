@@ -2,6 +2,8 @@ from flask import Blueprint
 exam = Blueprint('exam', __name__)
 auth = Blueprint('auth', __name__)
 show = Blueprint('show', __name__)
+answers = Blueprint('answers', __name__)
 from app.views.user_views import user
 from app.views.answer_views import answer
+from app.views.answer_views import paper
 from app.views.answer_views import display

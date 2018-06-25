@@ -33,6 +33,11 @@ class Paper(BaseModel):
     total_paper_score = db.Column(db.Integer, comment='考卷总分')
     exam_time = db.Column(db.Integer, comment='考试时间（分钟）')
     remainder_time = db.Column(db.Integer, comment='剩余时间（分钟）')
+    head_id = db.Column(db.Integer, db.ForeignKey('head.id'),
+                             comment='标题')
+    head = db.relationship('Head',
+                                 backref=db.backref('paper_head',
+                                                    lazy='dynamic'))
 
 
 class Scene(BaseModel):

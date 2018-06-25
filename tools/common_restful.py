@@ -101,10 +101,11 @@ def com_get(model_cls, **filter_by):
     return obj
 
 
-def com_put(db, model_cls, **filter_by):
+def com_put(db, model_cls, args=None, **filter_by):
     # 数据头需为json格式
     if request.headers['Content-Type'] == 'application/json':
-        args = request.json
+        if args is None:
+            args = request.json
         current_app.logger.debug('com_put filter_by: {}'.format(filter_by))
         current_app.logger.debug('com_put args: {}'.format(args))
     else:
@@ -127,6 +128,14 @@ def com_put(db, model_cls, **filter_by):
         except Exception as e:
             current_app.logger.error("{} update db commit exception: {}".format(model_cls, e))
             raise e
+        try:
+            # 查询数据
+            obj = model_cls.query.filter_by(**filter_by).one()
+        except Exception as e:
+            current_app.logger.error("{} key=value filter_by exception: {}".format(model_cls, e))
+            current_app.logger.error("key=value filter_by: {}".format(filter_by))
+            raise e
+        return obj
 
 
 def com_del(db, model_cls, **filter_by):

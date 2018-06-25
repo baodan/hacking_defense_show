@@ -100,25 +100,19 @@ def create_user():
                 raise InvalidMessage(str(e), 500)
             # 添加组给用户
             try:
-                add_group_to_user(user, group)
+                user_helper.add_group_to_user(user, group)
             except Exception as e:
                 current_app.logger.error("[user][add_group] fail expection: {}".format(e))
                 raise InvalidMessage(str(e), 500)
     db.session.commit()
     data = user_helper.make_user_reponse_body(user)
-    return return_data(data, 200)
+    return return_data(data, 201)
 
 
 @auth.route('/delete_user/<int:id>', methods=['DELETE'])
 @roles_required('admin')
 @auth_token_required
 def delete_user(id):
-    # 数据头需为json格式
-    if request.headers['Content-Type'] == 'application/json':
-        args = request.json
-        current_app.logger.debug('get_token args: {}'.format(args))
-    else:
-        raise InvalidMessage('only support json data', 404)
     # 获取用户对象
     try:
         user = user_datastore.find_user(id=id)
@@ -141,80 +135,53 @@ def delete_user(id):
     return return_data('delete success', 204)
 
 
-@auth.route('/add_role_to_user', methods=['PUT'])
-@roles_required('admin')
-@auth_token_required
-def add_role_to_user():
-    # 数据头需为json格式
-    if request.headers['Content-Type'] == 'application/json':
-        args = request.json
-        current_app.logger.debug('get_token args: {}'.format(args))
-    else:
-        raise InvalidMessage('only support json data', 404)
-    user_id = args['user_id']
-    role_ids = args['roles']
-    try:
-        user = user_datastore.find_user(id=user_id)
-    except Exception as e:
-        current_app.logger.error("[user][get] fail expection: {}".format(e))
-        raise InvalidMessage(str(e), 500)
-    for role_id in role_ids:
-        try:
-            role = com_get(Role, id=role_id)
-        except Exception as e:
-            current_app.logger.error("[role][get] fail expection: {}".format(e))
-            raise InvalidMessage(str(e), 500)
-        try:
-            user_datastore.add_role_to_user(user, role)
-        except Exception as e:
-            current_app.logger.error("[user][add_role] fail expection: {}".format(e))
-            raise InvalidMessage(str(e), 500)
-    db.session.commit()
-    return return_data('update success', 201)
-
-
-@auth.route('/remove_role_from_user', methods=['PUT'])
-@roles_required('admin')
-@auth_token_required
-def remove_role_from_user():
-    # 数据头需为json格式
-    if request.headers['Content-Type'] == 'application/json':
-        args = request.json
-        current_app.logger.debug('get_token args: {}'.format(args))
-    else:
-        raise InvalidMessage('only support json data', 404)
-    user_id = args['user_id']
-    role_ids = args['roles']
-    try:
-        user = user_datastore.find_user(id=user_id)
-    except Exception as e:
-        current_app.logger.error("[user][get] fail expection: {}".format(e))
-        raise InvalidMessage(str(e), 500)
-    for role_id in role_ids:
-        try:
-            role = com_get(Role, id=role_id)
-        except Exception as e:
-            current_app.logger.error("[role][get] fail expection: {}".format(e))
-            raise InvalidMessage(str(e), 500)
-        try:
-            user_datastore.remove_role_from_user(user, role)
-        except Exception as e:
-            current_app.logger.error("[user][remove_role] fail expection: {}".format(e))
-            raise InvalidMessage(str(e), 500)
-    db.session.commit()
-    return return_data('update success', 201)
-
-
 @auth.route('/update_user/<int:id>', methods=['PUT'])
 @roles_required('admin')
 @auth_token_required
 def update_user(id):
+    # 数据头需为json格式
+    if request.headers['Content-Type'] == 'application/json':
+        args = request.json
+        current_app.logger.debug('get_token args: {}'.format(args))
+    else:
+        raise InvalidMessage('only support json data', 404)
+    if "password" in args:
+        args['password'] = hash_password(args['password'])
     try:
-        com_put(db, User, **{'id': id})
+        com_put(db, User, args, **{'id': id})
     except Exception as e:
         current_app.logger.error("[user][put] fail expection: {}".format(e))
         raise InvalidMessage(str(e), 500)
-    return return_data('update success', 201)
+    return return_data('update success', 200)
+
+
+@auth.route('/get_user/<int:id>', methods=['GET'])
+@roles_required('admin')
+@auth_token_required
+def get_user(id):
+    try:
+        user = com_get(User, id=id)
+    except Exception as e:
+        current_app.logger.error("[user][get] fail expection: {}".format(e))
+        raise InvalidMessage(str(e), 500)
+    data = user_helper.make_user_reponse_body(user)
+    return return_data(data, 200)
+
+
+@auth.route('/get_users', methods=['GET'])
+@roles_required('admin')
+@auth_token_required
+def get_users():
+    try:
+        users = com_gets(User)
+    except Exception as e:
+        current_app.logger.error("[user][gets] fail expection: {}".format(e))
+        raise InvalidMessage(str(e), 500)
+    datas = []
+    for user in users:
+        data = user_helper.make_user_reponse_body(user)
+        datas.append(data)
+    return return_data(datas, 200)
 
 
 @auth.route('/create_group', methods=['POST'])
@@ -238,19 +205,13 @@ def update_group(id):
         com_put(db, Group, **{'id': id})
     except Exception as e:
         current_app.logger.error("[group][put] fail expection: {}".format(e))
-    return return_data('update success', 201)
+    return return_data('update success', 200)
 
 
 @auth.route('/delete_group/<int:id>', methods=['DELETE'])
 @roles_required('admin')
 @auth_token_required
 def delete_group(id):
-    # 数据头需为json格式
-    if request.headers['Content-Type'] == 'application/json':
-        args = request.json
-        current_app.logger.debug('get_token args: {}'.format(args))
-    else:
-        raise InvalidMessage('only support json data', 404)
     # 获取组对象
     try:
         group = com_get(Group, id=id)
@@ -304,7 +265,7 @@ def add_group_to_user():
             current_app.logger.error("[user][add_group] fail expection: {}".format(e))
             raise InvalidMessage(str(e), 500)
     db.session.commit()
-    return return_data('update success', 201)
+    return return_data('update success', 200)
 
 
 @auth.route('/remove_group_to_user', methods=['PUT'])
@@ -336,39 +297,7 @@ def remove_group_to_user():
             current_app.logger.error("[user][remove_group] fail expection: {}".format(e))
             raise InvalidMessage(str(e), 500)
     db.session.commit()
-    return return_data('update success', 201)
-
-
-@auth.route('/get_users', methods=['GET'])
-@roles_required('admin')
-@auth_token_required
-def get_users():
-    try:
-        users = com_gets(User)
-    except Exception as e:
-        current_app.logger.error("[user][gets] fail expection: {}".format(e))
-        raise InvalidMessage(str(e), 500)
-    datas = []
-    for user in users:
-        data = user_helper.make_user_reponse_body(user)
-        datas.append(data)
-    return return_data(datas, 200)
-
-
-@auth.route('/get_roles', methods=['GET'])
-@roles_required('admin')
-@auth_token_required
-def get_roles():
-    try:
-        roles = com_gets(Role)
-    except Exception as e:
-        current_app.logger.error("[role][gets] fail expection: {}".format(e))
-        raise InvalidMessage(str(e), 500)
-    datas = []
-    for role in roles:
-        data = user_helper.make_role_reponse_body(role)
-        datas.append(data)
-    return return_data(datas, 200)
+    return return_data('update success', 200)
 
 
 @auth.route('/get_groups', methods=['GET'])
@@ -387,17 +316,81 @@ def get_groups():
     return return_data(datas, 200)
 
 
-@auth.route('/get_user/<int:id>', methods=['GET'])
+@auth.route('/get_group/<int:id>', methods=['GET'])
 @roles_required('admin')
 @auth_token_required
-def get_user(id):
+def get_group(id):
     try:
-        user = com_get(User, id=id)
+        group = com_get(Group, id=id)
+    except Exception as e:
+        current_app.logger.error("[group][get] fail expection: {}".format(e))
+        raise InvalidMessage(str(e), 500)
+    data = user_helper.make_role_reponse_body(group)
+    return return_data(data, 200)
+
+
+@auth.route('/add_role_to_user', methods=['PUT'])
+@roles_required('admin')
+@auth_token_required
+def add_role_to_user():
+    # 数据头需为json格式
+    if request.headers['Content-Type'] == 'application/json':
+        args = request.json
+        current_app.logger.debug('get_token args: {}'.format(args))
+    else:
+        raise InvalidMessage('only support json data', 404)
+    user_id = args['user_id']
+    role_ids = args['roles']
+    try:
+        user = user_datastore.find_user(id=user_id)
     except Exception as e:
         current_app.logger.error("[user][get] fail expection: {}".format(e))
         raise InvalidMessage(str(e), 500)
-    data = user_helper.make_user_reponse_body(user)
-    return return_data(data, 200)
+    for role_id in role_ids:
+        try:
+            role = com_get(Role, id=role_id)
+        except Exception as e:
+            current_app.logger.error("[role][get] fail expection: {}".format(e))
+            raise InvalidMessage(str(e), 500)
+        try:
+            user_datastore.add_role_to_user(user, role)
+        except Exception as e:
+            current_app.logger.error("[user][add_role] fail expection: {}".format(e))
+            raise InvalidMessage(str(e), 500)
+    db.session.commit()
+    return return_data('update success', 200)
+
+
+@auth.route('/remove_role_from_user', methods=['PUT'])
+@roles_required('admin')
+@auth_token_required
+def remove_role_from_user():
+    # 数据头需为json格式
+    if request.headers['Content-Type'] == 'application/json':
+        args = request.json
+        current_app.logger.debug('get_token args: {}'.format(args))
+    else:
+        raise InvalidMessage('only support json data', 404)
+    user_id = args['user_id']
+    role_ids = args['roles']
+    try:
+        user = user_datastore.find_user(id=user_id)
+    except Exception as e:
+        current_app.logger.error("[user][get] fail expection: {}".format(e))
+        raise InvalidMessage(str(e), 500)
+    for role_id in role_ids:
+        try:
+            role = com_get(Role, id=role_id)
+        except Exception as e:
+            current_app.logger.error("[role][get] fail expection: {}".format(e))
+            raise InvalidMessage(str(e), 500)
+        try:
+            user_datastore.remove_role_from_user(user, role)
+        except Exception as e:
+            current_app.logger.error("[user][remove_role] fail expection: {}".format(e))
+            raise InvalidMessage(str(e), 500)
+    db.session.commit()
+    return return_data('update success', 200)
 
 
 @auth.route('/get_role/<int:id>', methods=['GET'])
@@ -413,15 +406,28 @@ def get_role(id):
     return return_data(data, 200)
 
 
-@auth.route('/get_group/<int:id>', methods=['GET'])
+@auth.route('/get_roles', methods=['GET'])
 @roles_required('admin')
 @auth_token_required
-def get_group(id):
+def get_roles():
     try:
-        group = com_get(Group, id=id)
+        roles = com_gets(Role)
     except Exception as e:
-        current_app.logger.error("[group][get] fail expection: {}".format(e))
+        current_app.logger.error("[role][gets] fail expection: {}".format(e))
         raise InvalidMessage(str(e), 500)
-    data = user_helper.make_role_reponse_body(group)
-    return return_data(data, 200)
+    datas = []
+    for role in roles:
+        data = user_helper.make_role_reponse_body(role)
+        datas.append(data)
+    return return_data(datas, 200)
 
+
+@auth.route('/update_role/<int:id>', methods=['PUT'])
+@roles_required('admin')
+@auth_token_required
+def update_role(id):
+    try:
+        com_put(db, Role, **{'id': id})
+    except Exception as e:
+        current_app.logger.error("[role][put] fail expection: {}".format(e))
+    return return_data('update success', 200)

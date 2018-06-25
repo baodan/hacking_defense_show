@@ -6,7 +6,7 @@ from tools.json_update import CJsonEncoder
 def return_data(message, status_code=200, headers=None, json_update=False):
     # 定制返回格式
     data_format = {
-        'status': 201,
+        'status': status_code,
         'data': message
     }
     # 添加json对日期、有小数点数值的处理
