@@ -12,6 +12,8 @@ from app.models.answer import Scene, Subject, Paper,\
     PaperQuestion
 from tools import model_helper
 from app.views.answer_views import paper_helper
+import threading
+import time
 
 
 @exam.route('/create_label', methods=['POST'])
@@ -577,6 +579,8 @@ def start_paper(id):
         db.session.commit()
     except Exception as e:
         current_app.logger.error("{} update db commit exception: {}".format(Paper, e))
+    t = threading.Thread(target=compute_time, args=(paper,))
+    t.start()
     return return_data('paper going', 200)
 
 
@@ -598,3 +602,16 @@ def end_paper(id):
     except Exception as e:
         current_app.logger.error("{} update db commit exception: {}".format(Paper, e))
     return return_data('paper close', 200)
+
+
+def compute_time(paper):
+    remainder_time = paper.remainder_time
+    while remainder_time:
+        time.sleep(60)
+        remainder_time = remainder_time - 1
+        paper.remainder_time = remainder_time
+        try:
+            # 同步数据到数据库
+            db.session.commit()
+        except Exception as e:
+            current_app.logger.error("{} update raiming_time exception: {}".format(Paper, e))
