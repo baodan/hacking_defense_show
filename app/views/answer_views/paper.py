@@ -8,8 +8,10 @@ from app.database import db
 from app.customer_error_class import InvalidMessage
 from app.return_format import return_data
 from app.models.answer import Scene, Subject, Paper,\
-    Question, Head, Label
+    Question, Head, Label, GroupHead, UserHead, UserPaper,\
+    PaperQuestion
 from tools import model_helper
+from app.views.answer_views import paper_helper
 
 
 @exam.route('/create_label', methods=['POST'])
@@ -41,12 +43,6 @@ def update_label(id):
 @roles_required('admin')
 @auth_token_required
 def delete_label(id):
-    # 数据头需为json格式
-    if request.labelers['Content-Type'] == 'application/json':
-        args = request.json
-        current_app.logger.debug('get_token args: {}'.format(args))
-    else:
-        raise InvalidMessage('only support json data', 404)
     # 删除场景
     try:
         com_del(db, Label, id=id)
@@ -111,12 +107,6 @@ def update_head(id):
 @roles_required('admin')
 @auth_token_required
 def delete_head(id):
-    # 数据头需为json格式
-    if request.headers['Content-Type'] == 'application/json':
-        args = request.json
-        current_app.logger.debug('get_token args: {}'.format(args))
-    else:
-        raise InvalidMessage('only support json data', 404)
     # 删除场景
     try:
         com_del(db, Head, id=id)
@@ -181,12 +171,6 @@ def update_scene(id):
 @roles_required('admin')
 @auth_token_required
 def delete_scene(id):
-    # 数据头需为json格式
-    if request.headers['Content-Type'] == 'application/json':
-        args = request.json
-        current_app.logger.debug('get_token args: {}'.format(args))
-    else:
-        raise InvalidMessage('only support json data', 404)
     # 删除场景
     try:
         com_del(db, Scene, id=id)
@@ -226,12 +210,45 @@ def get_scene(id):
 @roles_required('admin')
 @auth_token_required
 def create_subject():
+    # 数据头需为json格式
+    if request.headers['Content-Type'] == 'application/json':
+        args = request.json
+        current_app.logger.debug('get_token args: {}'.format(args))
+    else:
+        raise InvalidMessage('only support json data', 404)
+    subject_dict = args.get('subject', '')
+    label_list = args.get('labels', '')
     try:
-        subject = com_post(db, Subject)
+        # 获取post内容
+        subject = Subject(**subject_dict)
     except Exception as e:
-        current_app.logger.error("[subject][post] fail expection: {}".format(e))
-        return InvalidMessage(str(e), 500)
-    data = model_helper.obj_to_dict(subject)
+        current_app.logger.error("{} model init exception: {}".format(Subject, e))
+        current_app.logger.error("model_data: {}".format(subject_dict))
+        raise e
+    if label_list:
+        for label_id in label_list:
+            #  获取标签对象
+            try:
+                label = Label.query.filter_by(id=label_id).one()
+            except Exception as e:
+                current_app.logger.error("[label][get] fail expection: {}".format(e))
+                raise InvalidMessage(str(e), 500)
+            # 添加标签给题
+            try:
+                paper_helper.add_label_to_subject(subject, label)
+            except Exception as e:
+                current_app.logger.error("[user][add_group] fail expection: {}".format(e))
+                raise InvalidMessage(str(e), 500)
+    # 添加对象
+    db.session.add(subject)
+    try:
+        # 同步数据到数据库
+        db.session.commit()
+    except Exception as e:
+        current_app.logger.error("{} model init exception: {}".format(Subject, e))
+        current_app.logger.error("model_data: {}".format(args))
+        raise e
+    data = paper_helper.make_subject_reponse_body(subject)
     return return_data(data, 201)
 
 
@@ -251,12 +268,6 @@ def update_subject(id):
 @roles_required('admin')
 @auth_token_required
 def delete_subject(id):
-    # 数据头需为json格式
-    if request.headers['Content-Type'] == 'application/json':
-        args = request.json
-        current_app.logger.debug('get_token args: {}'.format(args))
-    else:
-        raise InvalidMessage('only support json data', 404)
     # 删除场景
     try:
         com_del(db, Subject, id=id)
@@ -275,7 +286,10 @@ def get_subjects():
     except Exception as e:
         current_app.logger.error("[subject][gets] fail expection: {}".format(e))
         return InvalidMessage(str(e), 500)
-    datas = model_helper.obj_list_to_list_dict(subjects)
+    datas = []
+    for subject in subjects:
+        data = paper_helper.make_subject_reponse_body(subject)
+        datas.append(data)
     return return_data(datas, 200)
 
 
@@ -288,8 +302,77 @@ def get_subject(id):
     except Exception as e:
         current_app.logger.error("[subject][get] fail expection: {}".format(e))
         return InvalidMessage(str(e), 500)
-    data = model_helper.obj_to_dict(subject)
+    data = paper_helper.make_subject_reponse_body(subject)
     return return_data(data, 200)
+
+
+@exam.route('/add_label_to_subject', methods=['PUT'])
+@roles_required('admin')
+@auth_token_required
+def add_label_to_subject():
+    # 数据头需为json格式
+    if request.headers['Content-Type'] == 'application/json':
+        args = request.json
+        current_app.logger.debug('get_token args: {}'.format(args))
+    else:
+        raise InvalidMessage('only support json data', 404)
+    subject_id = args['subject_id']
+    label_ids = args['labels']
+    # 获取题对象
+    try:
+        subject = com_get(Subject, id=subject_id)
+    except Exception as e:
+        current_app.logger.error("[subject][get] fail expection: {}".format(e))
+        raise InvalidMessage(str(e), 500)
+    for label_id in label_ids:
+        # 获取标签对象
+        try:
+            label = com_get(Label, id=label_id)
+        except Exception as e:
+            current_app.logger.error("[label][get] fail expection: {}".format(e))
+            raise InvalidMessage(str(e), 500)
+        # 添加组给用户
+        try:
+            paper_helper.add_label_to_subject(subject, label)
+        except Exception as e:
+            current_app.logger.error("[label][add_label] fail expection: {}".format(e))
+            raise InvalidMessage(str(e), 500)
+    db.session.commit()
+    return return_data('update success', 200)
+
+
+@exam.route('/remove_label_to_subject', methods=['PUT'])
+@roles_required('admin')
+@auth_token_required
+def remove_label_to_subject():
+    # 数据头需为json格式
+    if request.headers['Content-Type'] == 'application/json':
+        args = request.json
+        current_app.logger.debug('get_token args: {}'.format(args))
+    else:
+        raise InvalidMessage('only support json data', 404)
+    subject_id = args['subject_id']
+    label_ids = args['labels']
+    # 获取题对象
+    try:
+        subject = com_get(Subject, id=subject_id)
+    except Exception as e:
+        current_app.logger.error("[subject][get] fail expection: {}".format(e))
+        raise InvalidMessage(str(e), 500)
+    for label_id in label_ids:
+        # 获取标签对象
+        try:
+            label = com_get(Label, id=label_id)
+        except Exception as e:
+            current_app.logger.error("[label][get] fail expection: {}".format(e))
+            raise InvalidMessage(str(e), 500)
+        try:
+            paper_helper.remove_label_to_subject(subject, label)
+        except Exception as e:
+            current_app.logger.error("[subject][remove_label] fail expection: {}".format(e))
+            raise InvalidMessage(str(e), 500)
+    db.session.commit()
+    return return_data('update success', 200)
 
 
 @exam.route('/create_paper', methods=['POST'])
@@ -321,12 +404,6 @@ def update_paper(id):
 @roles_required('admin')
 @auth_token_required
 def delete_paper(id):
-    # 数据头需为json格式
-    if request.headers['Content-Type'] == 'application/json':
-        args = request.json
-        current_app.logger.debug('get_token args: {}'.format(args))
-    else:
-        raise InvalidMessage('only support json data', 404)
     # 删除场景
     try:
         com_del(db, Paper, id=id)
@@ -391,12 +468,6 @@ def update_question(id):
 @roles_required('admin')
 @auth_token_required
 def delete_question(id):
-    # 数据头需为json格式
-    if request.headers['Content-Type'] == 'application/json':
-        args = request.json
-        current_app.logger.debug('get_token args: {}'.format(args))
-    else:
-        raise InvalidMessage('only support json data', 404)
     # 删除场景
     try:
         com_del(db, Question, id=id)
@@ -411,7 +482,7 @@ def delete_question(id):
 @auth_token_required
 def get_questions():
     try:
-        questions = com_gets(Question)
+        questions = Question.query.order_by('number')
     except Exception as e:
         current_app.logger.error("[question][gets] fail expection: {}".format(e))
         return InvalidMessage(str(e), 500)
@@ -430,3 +501,100 @@ def get_question(id):
         return InvalidMessage(str(e), 500)
     data = model_helper.obj_to_dict(question)
     return return_data(data, 200)
+
+
+@exam.route('/start_paper/<int:id>', methods=['PUT'])
+@roles_required('examiner')
+@auth_token_required
+def start_paper(id):
+    try:
+        # 查询数据
+        paper = Paper.query.filter_by(id=id).one()
+        paper.status = "going"
+    except Exception as e:
+        current_app.logger.error("{} key=value filter_by exception: {}".format(Paper, e))
+        current_app.logger.error("key=value filter_by: {}".format(id))
+        raise e
+    head = paper.head
+    groups = head.groups
+    users = paper.users
+    questions = paper.questions
+    # 如果这是第一个paper创建所有group_head
+    if groups and not head.user_heads:
+        for group in groups:
+            group_head_dict = {
+                'head_id': head.id,
+                'group_id': group.id
+            }
+            group_head = GroupHead(**group_head_dict)
+    else:
+        return return_data('no group to exam', 404)
+    if users:
+        for user in users:
+            user_groups = user.groups
+            inter_group_list = list(set(user_groups) & set(groups))
+            # 在一次paper中一个user只能属于一个group
+            if len(inter_group_list) == 1:
+                try:
+                    # 找到这次paper中这个user的唯一组，一般存在
+                    group_head = GroupHead.query.filter_by(group_id=inter_group_list[0].id, head_id=head.id).one_or_none()
+                except Exception as e:
+                    current_app.logger.error("{} key=value filter_by exception: {}".format(GroupHead, e))
+                    current_app.logger.error("key=value filter_by: {}".format(id))
+                if group_head:
+                    try:
+                        # 查找这个用户在这个head是否已经创建user_head
+                        user_head = UserHead.query.filter_by(user_id=user.id, head_id=head.id).one_or_none()
+                    except Exception as e:
+                        current_app.logger.error("{} key=value filter_by exception: {}".format(GroupHead, e))
+                        current_app.logger.error("key=value filter_by: {}".format(id))
+                    #  若user_head不存在就创建一个
+                    if not user_head:
+                        user_head_dict = {
+                            'user_id': user.id,
+                            'head_id': paper.head_id,
+                            'group_head_id': group_head.id
+                        }
+                        user_head = UserHead(**user_head_dict)
+                    user_paper_dict = {
+                        "user_id": user.id,
+                        "paper_id": paper.id,
+                        "user_head_id": user_head.id
+                    }
+                    # 创建user_paper
+                    user_paper = UserPaper(**user_paper_dict)
+                    # 创建user_paper下的这个user的所有paper_question
+                    for question in questions:
+                        paper_question_dict = {
+                            "user_paper_id": user_paper.id,
+                            "question_id": question.id
+                        }
+                        paper_question = PaperQuestion(**paper_question_dict)
+            else:
+                return return_data('no group to exam', 404)
+    try:
+        # 同步数据到数据库
+        db.session.commit()
+    except Exception as e:
+        current_app.logger.error("{} update db commit exception: {}".format(Paper, e))
+    return return_data('paper going', 200)
+
+
+@exam.route('/end_paper/<int:id>', methods=['PUT'])
+@roles_required('examiner')
+@auth_token_required
+def end_paper(id):
+    try:
+        # 查询数据
+        paper = Paper.query.filter_by(id=id).one()
+        paper.status = "close"
+    except Exception as e:
+        current_app.logger.error("{} key=value filter_by exception: {}".format(Paper, e))
+        current_app.logger.error("key=value filter_by: {}".format(id))
+        raise e
+    try:
+        # 同步数据到数据库
+        db.session.commit()
+    except Exception as e:
+        current_app.logger.error("{} update db commit exception: {}".format(Paper, e))
+    return return_data('paper close', 200)

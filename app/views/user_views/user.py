@@ -104,7 +104,13 @@ def create_user():
             except Exception as e:
                 current_app.logger.error("[user][add_group] fail expection: {}".format(e))
                 raise InvalidMessage(str(e), 500)
-    db.session.commit()
+    try:
+        # 同步数据到数据库
+        db.session.commit()
+    except Exception as e:
+        current_app.logger.error("{} model init exception: {}".format(User, e))
+        current_app.logger.error("model_data: {}".format(args))
+        raise e
     data = user_helper.make_user_reponse_body(user)
     return return_data(data, 201)
 

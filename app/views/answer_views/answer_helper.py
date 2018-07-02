@@ -1,46 +1,17 @@
-def add_label_to_subject(subject, label):
-    subject.labels.append(label)
-
-
-def remove_label_to_subject(subject, label):
-    subject.labels.remove(label)
-    
-    
-def make_subject_reponse_body(subject):
-    data = {
-        'subject': {
-            'id': subject.id,
-            'question': subject.question,
-            'type': subject.type,
-            'answer': subject.answer,
-            'scene_id': subject.scene_id,
-        },
-        'labels': []
-    }
-    labels = subject.labels
-    scenes = subject.scene
-    if labels:
-        for label in labels:
-            data['labels'].append(make_label_reponse_body(label))
-    if scenes:
-        for scene in scenes:
-            data['scene'] = make_scene_reponse_body(scene)
-    return data
-
-
-def make_label_reponse_body(label):
-    data = {
-        'id': label.id,
-        'name': label.name,
-        'describe': label.describe
-    }
-    return data
-
-
-def make_scene_reponse_body(scene):
-    data = {
-        'id': scene.id,
-        'describe': scene.describe
-    }
-    return data
-
+def compute_score(paper_question):
+    group_head = paper_question.user_paper.user_head.group_head
+    user_heads = group_head.user_heads
+    group_head_score = 0
+    for user_head in user_heads:
+        user_papers = user_head.user_papers
+        user_head_score = 0
+        for user_paper in user_papers:
+            paper_questions = user_paper.paper_questions
+            user_paper_score = 0
+            for paper_question in paper_questions:
+                user_paper_score = user_paper_score + paper_question.question_score
+            user_paper.user_score = user_paper_score
+            user_head_score = user_head_score + user_paper_score
+        user_head.total_user_score = user_head_score
+        group_head_score = group_head_score + user_head_score
+    group_head.total_group_score = group_head_score

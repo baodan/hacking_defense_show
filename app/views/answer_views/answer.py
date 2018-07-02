@@ -8,8 +8,10 @@ from app.database import db
 from app.customer_error_class import InvalidMessage
 from app.return_format import return_data
 from app.models.answer import PaperQuestion, UserPaper, GroupHead,\
-    UserHead
+    UserHead, Paper, PaperQuestionLog, ApproveLog
 from tools import model_helper
+from flask_security import current_user
+from app.views.answer_views import answer_helper
 
 
 @answers.route('/create_user_paper', methods=['POST'])
@@ -41,12 +43,6 @@ def update_user_paper(id):
 @roles_required('admin')
 @auth_token_required
 def delete_user_paper(id):
-    # 数据头需为json格式
-    if request.headers['Content-Type'] == 'application/json':
-        args = request.json
-        current_app.logger.debug('get_token args: {}'.format(args))
-    else:
-        raise InvalidMessage('only support json data', 404)
     # 删除场景
     try:
         com_del(db, UserPaper, id=id)
@@ -111,12 +107,6 @@ def update_paper_question(id):
 @roles_required('admin')
 @auth_token_required
 def delete_paper_question(id):
-    # 数据头需为json格式
-    if request.headers['Content-Type'] == 'application/json':
-        args = request.json
-        current_app.logger.debug('get_token args: {}'.format(args))
-    else:
-        raise InvalidMessage('only support json data', 404)
     # 删除场景
     try:
         com_del(db, PaperQuestion, id=id)
@@ -181,12 +171,6 @@ def update_group_head(id):
 @roles_required('admin')
 @auth_token_required
 def delete_group_head(id):
-    # 数据头需为json格式
-    if request.group_headers['Content-Type'] == 'application/json':
-        args = request.json
-        current_app.logger.debug('get_token args: {}'.format(args))
-    else:
-        raise InvalidMessage('only support json data', 404)
     # 删除场景
     try:
         com_del(db, GroupHead, id=id)
@@ -251,12 +235,6 @@ def update_user_head(id):
 @roles_required('admin')
 @auth_token_required
 def delete_user_head(id):
-    # 数据头需为json格式
-    if request.user_headers['Content-Type'] == 'application/json':
-        args = request.json
-        current_app.logger.debug('get_token args: {}'.format(args))
-    else:
-        raise InvalidMessage('only support json data', 404)
     # 删除场景
     try:
         com_del(db, UserHead, id=id)
@@ -290,6 +268,94 @@ def get_user_head(id):
         return InvalidMessage(str(e), 500)
     data = model_helper.obj_to_dict(user_head)
     return return_data(data, 200)
+
+
+@answers.route('/submit_answer/<int:id>', methods=['PUT'])
+@roles_required('contestant')
+@auth_token_required
+def submit_answer(id):
+    # 获取post内容
+    if request.headers['Content-Type'] == 'application/json':
+        args = request.json
+        current_app.logger.debug('submit_answer args: {}'.format(args))
+    else:
+        raise 'only support json data'
+    user_answer = args['user_answer']
+    try:
+        # 查询数据
+        paper_question = PaperQuestion.query.filter_by(id=id).one()
+    except Exception as e:
+        current_app.logger.error("{} key=value filter_by exception: {}".format(PaperQuestion, e))
+        current_app.logger.error("key=value filter_by: {}".format(id))
+        raise e
+    paper_status = paper_question.question.paper.status
+    if paper_status == 'new':
+        return return_data('Examination did not begin', 200)
+    elif paper_status == 'end':
+        return return_data('The exam has ended', 200)
+
+    paper_question.user_answer = user_answer
+    paper_question.status = "approved"
+    log_dict = {
+        'user_id': current_user.id,
+        'context': user_answer,
+        'paper_question_id': id
+    }
+    try:
+        # 获取post内容
+        log = PaperQuestionLog(**log_dict)
+    except Exception as e:
+        current_app.logger.error("{} model init exception: {}".format(PaperQuestionLog, e))
+        current_app.logger.error("model_data: {}".format(log_dict))
+        raise e
+    try:
+        # 同步数据到数据库
+        db.session.commit()
+    except Exception as e:
+        current_app.logger.error("{} update db commit exception: {}".format(Paper, e))
+    return return_data('paper close', 200)
+
+
+@answers.route('/submit_score/<int:id>', methods=['PUT'])
+@roles_required('examiner')
+@auth_token_required
+def submit_score(id):
+    # 获取post内容
+    if request.headers['Content-Type'] == 'application/json':
+        args = request.json
+        current_app.logger.debug('submit_answer args: {}'.format(args))
+    else:
+        raise 'only support json data'
+    question_score = args['question_score']
+    try:
+        # 查询数据
+        paper_question = PaperQuestion.query.filter_by(id=id).one()
+        paper_question.question_score = question_score
+    except Exception as e:
+        current_app.logger.error("{} key=value filter_by exception: {}".format(PaperQuestion, e))
+        current_app.logger.error("key=value filter_by: {}".format(id))
+        raise e
+    log_dict = {
+        'examiner_id': current_user.id,
+        'context': paper_question.user_answer,
+        'paper_question_id': id,
+        'question_score': question_score
+    }
+    try:
+        # 获取post内容
+        log = ApproveLog(**log_dict)
+    except Exception as e:
+        current_app.logger.error("{} model init exception: {}".format(ApproveLog, e))
+        current_app.logger.error("model_data: {}".format(log_dict))
+        raise e
+    # 计算分数
+    answer_helper.compute_score(paper_question)
+    try:
+        # 同步数据到数据库
+        db.session.commit()
+    except Exception as e:
+        current_app.logger.error("{} update db commit exception: {}".format(Paper, e))
+    return return_data('paper close', 200)
 
 
 

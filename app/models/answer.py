@@ -6,6 +6,14 @@ labels_subjects = db.Table('labels_subjects',
         db.Column('label_id', db.Integer(), db.ForeignKey('label.id')),
         db.Column('subject_id', db.Integer(), db.ForeignKey('subject.id')))
 
+groups_heads = db.Table('groups_heads',
+                         db.Column('group_id', db.Integer(), db.ForeignKey('group.id')),
+                         db.Column('head_id', db.Integer(), db.ForeignKey('head.id')))
+
+users_papers = db.Table('users_papers',
+                         db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
+                         db.Column('paper_id', db.Integer(), db.ForeignKey('paper.id')))
+
 
 class Subject(BaseModel):
     __tablename__ = 'subject'
@@ -25,6 +33,8 @@ class Head(BaseModel):
     __tablename__ = 'head'
     name = db.Column(db.String(255), comment='标题')
     all_score = db.Column(db.Integer, comment='总分')
+    groups = db.relationship('Group', secondary=groups_heads,
+                            backref=db.backref('heads', lazy='dynamic'))
     
 
 class Paper(BaseModel):
@@ -38,6 +48,9 @@ class Paper(BaseModel):
     head = db.relationship('Head',
                                  backref=db.backref('paper_head',
                                                     lazy='dynamic'))
+    status = db.Column(db.String(255), comment='状态', default='new')
+    users = db.relationship('User', secondary=users_papers,
+                            backref=db.backref('papers', lazy='dynamic'))
 
 
 class Scene(BaseModel):
@@ -54,6 +67,7 @@ class Label(BaseModel):
 class Question(BaseModel):
     __tablename__ = 'question'
     name = db.Column(db.String(255))
+    number = db.Column(db.Integer, comment='题号')
     total_question_score = db.Column(db.Integer, comment='考题总分')
     subject_id = db.Column(db.Integer, db.ForeignKey('subject.id'),
                              comment='题目id')
@@ -63,7 +77,7 @@ class Question(BaseModel):
     paper_id = db.Column(db.Integer, db.ForeignKey('paper.id'),
                              comment='考卷id')
     paper = db.relationship('Paper',
-                                 backref=db.backref('question',
+                                 backref=db.backref('questions',
                                                     lazy='dynamic'))
 
 
@@ -72,6 +86,11 @@ class GroupHead(BaseModel):
     total_group_score = db.Column(db.Integer, comment='组总得分', default=0)
     group_id = db.Column(db.Integer, db.ForeignKey('group.id'),
                              comment='用户')
+    head_id = db.Column(db.Integer, db.ForeignKey('head.id'),
+                             comment='标题')
+    head = db.relationship('Head',
+                                 backref=db.backref('group_head',
+                                                    lazy='dynamic'))
     group = db.relationship('Group',
                                  backref=db.backref('group_head',
                                                     lazy='dynamic'))
@@ -105,7 +124,6 @@ class UserPaper(BaseModel):
     user = db.relationship('User',
                                  backref=db.backref('user_paper',
                                                     lazy='dynamic'))
-    status = db.Column(db.String(255), comment='状态', default='new')
     paper_id = db.Column(db.Integer, db.ForeignKey('paper.id'),
                              comment='考卷id')
     paper = db.relationship('Paper',
@@ -130,7 +148,7 @@ class PaperQuestion(BaseModel):
     question_id = db.Column(db.Integer, db.ForeignKey('question.id'),
                              comment='关联的考题')
     question = db.relationship('Question',
-                                 backref=db.backref('paper_question',
+                                 backref=db.backref('paper_questions',
                                                     lazy='dynamic'))
     status = db.Column(db.String(255), comment='状态', default='unapproved')
 
