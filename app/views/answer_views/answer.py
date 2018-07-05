@@ -342,7 +342,7 @@ def submit_score(id):
         'question_score': question_score
     }
     try:
-        # 获取post内容
+        # 创建日志
         log = ApproveLog(**log_dict)
     except Exception as e:
         current_app.logger.error("{} model init exception: {}".format(ApproveLog, e))

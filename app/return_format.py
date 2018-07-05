@@ -3,7 +3,7 @@ import json
 from tools.json_update import CJsonEncoder
 
 
-def return_data(message, status_code=200, headers=None, json_update=False):
+def return_data(message, status_code=200, headers=None, json_update=True):
     # 定制返回格式
     data_format = {
         'status': status_code,

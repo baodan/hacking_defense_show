@@ -46,7 +46,7 @@ class Paper(BaseModel):
     head_id = db.Column(db.Integer, db.ForeignKey('head.id'),
                              comment='标题')
     head = db.relationship('Head',
-                                 backref=db.backref('paper_head',
+                                 backref=db.backref('papers',
                                                     lazy='dynamic'))
     status = db.Column(db.String(255), comment='状态', default='new')
     users = db.relationship('User', secondary=users_papers,

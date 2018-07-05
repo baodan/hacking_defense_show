@@ -10,6 +10,7 @@ from app.return_format import return_data
 from app.models.answer import Scene, Subject, Paper,\
     Question, Head, Label, GroupHead, UserHead, UserPaper,\
     PaperQuestion
+from app.models.user import Group, User
 from tools import model_helper
 from app.views.answer_views import paper_helper
 import threading
@@ -77,70 +78,6 @@ def get_label(id):
         current_app.logger.error("[label][get] fail expection: {}".format(e))
         return InvalidMessage(str(e), 500)
     data = model_helper.obj_to_dict(label)
-    return return_data(data, 200)
-
-
-@exam.route('/create_head', methods=['POST'])
-@roles_required('admin')
-@auth_token_required
-def create_head():
-    try:
-        head = com_post(db, Head)
-    except Exception as e:
-        current_app.logger.error("[head][post] fail expection: {}".format(e))
-        return InvalidMessage(str(e), 500)
-    data = model_helper.obj_to_dict(head)
-    return return_data(data, 201)
-
-
-@exam.route('/update_head/<int:id>', methods=['PUT'])
-@roles_required('admin')
-@auth_token_required
-def update_head(id):
-    try:
-        com_put(db, Head, **{'id': id})
-    except Exception as e:
-        current_app.logger.error("[head][put] fail expection: {}".format(e))
-    
-    return return_data('update success', 200)
-
-
-@exam.route('/delete_head/<int:id>', methods=['DELETE'])
-@roles_required('admin')
-@auth_token_required
-def delete_head(id):
-    # 删除场景
-    try:
-        com_del(db, Head, id=id)
-    except Exception as e:
-        current_app.logger.error("[head][del] fail expection: {}".format(e))
-        return InvalidMessage(str(e), 500)
-    return return_data('delete success', 204)
-
-
-@exam.route('/get_heads', methods=['GET'])
-@roles_required('admin')
-@auth_token_required
-def get_heads():
-    try:
-        heads = com_gets(Head)
-    except Exception as e:
-        current_app.logger.error("[head][gets] fail expection: {}".format(e))
-        return InvalidMessage(str(e), 500)
-    datas = model_helper.obj_list_to_list_dict(heads)
-    return return_data(datas, 200)
-
-
-@exam.route('/get_head/<int:id>', methods=['GET'])
-@roles_required('admin')
-@auth_token_required
-def get_head(id):
-    try:
-        head = com_get(Head, id=id)
-    except Exception as e:
-        current_app.logger.error("[head][get] fail expection: {}".format(e))
-        return InvalidMessage(str(e), 500)
-    data = model_helper.obj_to_dict(head)
     return return_data(data, 200)
 
 
@@ -377,16 +314,231 @@ def remove_label_to_subject():
     return return_data('update success', 200)
 
 
+@exam.route('/create_head', methods=['POST'])
+@roles_required('admin')
+@auth_token_required
+def create_head():
+    # 数据头需为json格式
+    if request.headers['Content-Type'] == 'application/json':
+        args = request.json
+        current_app.logger.debug('get_token args: {}'.format(args))
+    else:
+        raise InvalidMessage('only support json data', 404)
+    head_dict = args.get('head', '')
+    group_list = args.get('groups', '')
+    group_list = args.get('groups', '')
+    try:
+        # 获取post内容
+        head = Head(**head_dict)
+    except Exception as e:
+        current_app.logger.error("{} model init exception: {}".format(Head, e))
+        current_app.logger.error("model_data: {}".format(head_dict))
+        raise e
+    if group_list:
+        for group_id in group_list:
+            #  获取组对象
+            try:
+                group = Group.query.filter_by(id=group_id).one()
+            except Exception as e:
+                current_app.logger.error("[group][get] fail expection: {}".format(e))
+                raise InvalidMessage(str(e), 500)
+            # 添加标题给组
+            try:
+                paper_helper.add_group_to_head(head, group)
+            except Exception as e:
+                current_app.logger.error("[head][add_group] fail expection: {}".format(e))
+                raise InvalidMessage(str(e), 500)
+    # 添加对象
+    db.session.add(head)
+    try:
+        # 同步数据到数据库
+        db.session.commit()
+    except Exception as e:
+        current_app.logger.error("{} model init exception: {}".format(Subject, e))
+        current_app.logger.error("model_data: {}".format(args))
+        raise e
+    data = paper_helper.make_head_reponse_body(head)
+    return return_data(data, 201)
+
+
+@exam.route('/update_head/<int:id>', methods=['PUT'])
+@roles_required('admin')
+@auth_token_required
+def update_head(id):
+    try:
+        com_put(db, Head, **{'id': id})
+    except Exception as e:
+        current_app.logger.error("[head][put] fail expection: {}".format(e))
+    
+    return return_data('update success', 200)
+
+
+@exam.route('/add_group_to_head', methods=['PUT'])
+@roles_required('admin')
+@auth_token_required
+def add_group_to_head():
+    # 数据头需为json格式
+    if request.headers['Content-Type'] == 'application/json':
+        args = request.json
+        current_app.logger.debug('get_token args: {}'.format(args))
+    else:
+        raise InvalidMessage('only support json data', 404)
+    head_id = args['head_id']
+    group_ids = args['groups']
+    # 获取题对象
+    try:
+        head = com_get(Head, id=head_id)
+    except Exception as e:
+        current_app.logger.error("[head][get] fail expection: {}".format(e))
+        raise InvalidMessage(str(e), 500)
+    for group_id in group_ids:
+        # 获取组对象
+        try:
+            group = com_get(Group, id=group_id)
+        except Exception as e:
+            current_app.logger.error("[group][get] fail expection: {}".format(e))
+            raise InvalidMessage(str(e), 500)
+        # 添加组给用户
+        try:
+            paper_helper.add_group_to_head(head, group)
+        except Exception as e:
+            current_app.logger.error("[head][add_group] fail expection: {}".format(e))
+            raise InvalidMessage(str(e), 500)
+    db.session.commit()
+    return return_data('update success', 200)
+
+
+@exam.route('/remove_group_to_head', methods=['PUT'])
+@roles_required('admin')
+@auth_token_required
+def remove_group_to_head():
+    # 数据头需为json格式
+    if request.headers['Content-Type'] == 'application/json':
+        args = request.json
+        current_app.logger.debug('get_token args: {}'.format(args))
+    else:
+        raise InvalidMessage('only support json data', 404)
+    head_id = args['head_id']
+    group_ids = args['groups']
+    # 获取题对象
+    try:
+        head = com_get(Head, id=head_id)
+    except Exception as e:
+        current_app.logger.error("[head][get] fail expection: {}".format(e))
+        raise InvalidMessage(str(e), 500)
+    for group_id in group_ids:
+        # 获取组对象
+        try:
+            group = com_get(Group, id=group_id)
+        except Exception as e:
+            current_app.logger.error("[group][get] fail expection: {}".format(e))
+            raise InvalidMessage(str(e), 500)
+        # 添加组给用户
+        try:
+            paper_helper.remove_group_to_head(head, group)
+        except Exception as e:
+            current_app.logger.error("[head][remove_group] fail expection: {}".format(e))
+            raise InvalidMessage(str(e), 500)
+    db.session.commit()
+    return return_data('update success', 200)
+
+
+@exam.route('/delete_head/<int:id>', methods=['DELETE'])
+@roles_required('admin')
+@auth_token_required
+def delete_head(id):
+    # 删除场景
+    try:
+        com_del(db, Head, id=id)
+    except Exception as e:
+        current_app.logger.error("[head][del] fail expection: {}".format(e))
+        return InvalidMessage(str(e), 500)
+    return return_data('delete success', 204)
+
+
+@exam.route('/get_heads', methods=['GET'])
+@roles_required('admin')
+@auth_token_required
+def get_heads():
+    try:
+        heads = com_gets(Head)
+    except Exception as e:
+        current_app.logger.error("[head][gets] fail expection: {}".format(e))
+        return InvalidMessage(str(e), 500)
+    datas = []
+    for head in heads:
+        datas.append(paper_helper.make_head_reponse_body(head))
+    return return_data(datas, 200)
+
+
+@exam.route('/get_head/<int:id>', methods=['GET'])
+@roles_required('admin')
+@auth_token_required
+def get_head(id):
+    try:
+        head = com_get(Head, id=id)
+    except Exception as e:
+        current_app.logger.error("[head][get] fail expection: {}".format(e))
+        return InvalidMessage(str(e), 500)
+    data = paper_helper.make_head_reponse_body(head)
+    return return_data(data, 200)
+
+
 @exam.route('/create_paper', methods=['POST'])
 @roles_required('admin')
 @auth_token_required
 def create_paper():
+    # 数据头需为json格式
+    if request.headers['Content-Type'] == 'application/json':
+        args = request.json
+        current_app.logger.debug('get_token args: {}'.format(args))
+    else:
+        raise InvalidMessage('only support json data', 404)
+    paper_dict = args.get('paper', '')
+    user_list = args.get('users', '')
+    question_list = args.get('questions', '')
     try:
-        paper = com_post(db, Paper)
+        # 获取post内容
+        paper = Paper(**paper_dict)
     except Exception as e:
-        current_app.logger.error("[paper][post] fail expection: {}".format(e))
-        return InvalidMessage(str(e), 500)
-    data = model_helper.obj_to_dict(paper)
+        current_app.logger.error("{} model init exception: {}".format(Paper, e))
+        current_app.logger.error("model_data: {}".format(paper_dict))
+        raise e
+    if user_list:
+        for user_id in user_list:
+            #  获取组对象
+            try:
+                user = User.query.filter_by(id=user_id).one()
+            except Exception as e:
+                current_app.logger.error("[user][get] fail expection: {}".format(e))
+                raise InvalidMessage(str(e), 500)
+            # 添加标题给组
+            try:
+                paper_helper.add_user_to_paper(paper, user)
+            except Exception as e:
+                current_app.logger.error("[paper][add_user] fail expection: {}".format(e))
+                raise InvalidMessage(str(e), 500)
+    if question_list:
+        for question_dict in question_list:
+            question_dict['paper_id'] = paper.id
+            try:
+                # 获取post内容
+                question = Question(**question_dict)
+            except Exception as e:
+                current_app.logger.error("{} model init exception: {}".format(Paper, e))
+                current_app.logger.error("model_data: {}".format(paper_dict))
+                raise e
+            db.session.add(question)
+    # 添加对象
+    db.session.add(paper)
+    try:
+        # 同步数据到数据库
+        db.session.commit()
+    except Exception as e:
+        current_app.logger.error("{} model init exception: {}".format(Paper, e))
+        current_app.logger.error("model_data: {}".format(args))
+        raise e
+    data = paper_helper.make_paper_reponse_body(paper)
     return return_data(data, 201)
 
 
@@ -399,6 +551,76 @@ def update_paper(id):
     except Exception as e:
         current_app.logger.error("[paper][put] fail expection: {}".format(e))
     
+    return return_data('update success', 200)
+
+
+@exam.route('/add_user_to_paper', methods=['PUT'])
+@roles_required('admin')
+@auth_token_required
+def add_user_to_paper():
+    # 数据头需为json格式
+    if request.headers['Content-Type'] == 'application/json':
+        args = request.json
+        current_app.logger.debug('get_token args: {}'.format(args))
+    else:
+        raise InvalidMessage('only support json data', 404)
+    paper_id = args['paper_id']
+    user_ids = args['users']
+    # 获取题对象
+    try:
+        paper = com_get(Paper, id=paper_id)
+    except Exception as e:
+        current_app.logger.error("[paper][get] fail expection: {}".format(e))
+        raise InvalidMessage(str(e), 500)
+    for user_id in user_ids:
+        # 获取用户对象
+        try:
+            user = com_get(User, id=user_id)
+        except Exception as e:
+            current_app.logger.error("[user][get] fail expection: {}".format(e))
+            raise InvalidMessage(str(e), 500)
+        # 添加用户给考卷
+        try:
+            paper_helper.add_user_to_paper(paper, user)
+        except Exception as e:
+            current_app.logger.error("[paper][add_user] fail expection: {}".format(e))
+            raise InvalidMessage(str(e), 500)
+    db.session.commit()
+    return return_data('update success', 200)
+
+
+@exam.route('/remove_user_to_paper', methods=['PUT'])
+@roles_required('admin')
+@auth_token_required
+def remove_user_to_paper():
+    # 数据头需为json格式
+    if request.headers['Content-Type'] == 'application/json':
+        args = request.json
+        current_app.logger.debug('get_token args: {}'.format(args))
+    else:
+        raise InvalidMessage('only support json data', 404)
+    paper_id = args['paper_id']
+    user_ids = args['users']
+    # 获取题对象
+    try:
+        paper = com_get(Paper, id=paper_id)
+    except Exception as e:
+        current_app.logger.error("[paper][get] fail expection: {}".format(e))
+        raise InvalidMessage(str(e), 500)
+    for user_id in user_ids:
+        # 获取用户对象
+        try:
+            user = com_get(User, id=user_id)
+        except Exception as e:
+            current_app.logger.error("[user][get] fail expection: {}".format(e))
+            raise InvalidMessage(str(e), 500)
+        # 添加用户给考卷
+        try:
+            paper_helper.remove_user_to_paper(paper, user)
+        except Exception as e:
+            current_app.logger.error("[paper][remove_user] fail expection: {}".format(e))
+            raise InvalidMessage(str(e), 500)
+    db.session.commit()
     return return_data('update success', 200)
 
 
@@ -424,7 +646,9 @@ def get_papers():
     except Exception as e:
         current_app.logger.error("[paper][gets] fail expection: {}".format(e))
         return InvalidMessage(str(e), 500)
-    datas = model_helper.obj_list_to_list_dict(papers)
+    datas = []
+    for paper in papers:
+        datas.append(paper_helper.make_paper_reponse_body(paper))
     return return_data(datas, 200)
 
 
@@ -437,7 +661,7 @@ def get_paper(id):
     except Exception as e:
         current_app.logger.error("[paper][get] fail expection: {}".format(e))
         return InvalidMessage(str(e), 500)
-    data = model_helper.obj_to_dict(paper)
+    data = paper_helper.make_paper_reponse_body(paper)
     return return_data(data, 200)
 
 
