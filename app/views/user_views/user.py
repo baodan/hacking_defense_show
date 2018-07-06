@@ -53,7 +53,9 @@ def get_token():
     except Exception as e:
         current_app.logger.error("[user][get_auth_token] fail expection: {}".format(e))
         raise InvalidMessage(str(e), 500)
-    return return_data({'token': token}, 200)
+    data = user_helper.make_user_reponse_body(user)
+    data['token'] = token
+    return return_data(data, 200)
     
 
 @auth.route('/create_user', methods=['POST'])
