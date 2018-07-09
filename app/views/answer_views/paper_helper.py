@@ -65,7 +65,7 @@ def make_question_reponse_body(question):
         'number': question.number,
         'total_question_score': question.total_question_score,
         'paper_id': question.paper_id,
-        'subject_id': question.subject_id
+        'subject': make_subject_reponse_body(question.subject)
     }
     return data
 
@@ -92,7 +92,6 @@ def make_subject_reponse_body(subject):
     data = {
         'subject': {
             'id': subject.id,
-            'question': subject.question,
             'type': subject.type,
             'answer': subject.answer,
             'scene_id': subject.scene_id,
@@ -125,3 +124,17 @@ def make_scene_reponse_body(scene):
         'describe': scene.describe
     }
     return data
+
+
+def compute_score(head):
+    papers = head.papers
+    head_score = 0
+    for paper in papers:
+        paper_score = 0
+        questions = paper.questions
+        for question in questions:
+            paper_score = paper_score + question.total_question_score
+        paper.total_paper_score = paper_score
+        head_score = head_score + paper_score
+    head.all_score = head_score
+    

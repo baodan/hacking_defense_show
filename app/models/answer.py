@@ -15,6 +15,17 @@ users_papers = db.Table('users_papers',
                          db.Column('paper_id', db.Integer(), db.ForeignKey('paper.id')))
 
 
+class Scene(BaseModel):
+    __tablename__ = 'scene'
+    describe = db.Column(db.Text, comment='场景描述')
+
+
+class Label(BaseModel):
+    __tablename__ = 'label'
+    name = db.Column(db.String(255), comment='标签简述')
+    describe = db.Column(db.Text, comment='标签描述')
+
+
 class Subject(BaseModel):
     __tablename__ = 'subject'
     topic = db.Column(db.Text, comment='考题题目')
@@ -51,22 +62,10 @@ class Paper(BaseModel):
     status = db.Column(db.String(255), comment='状态', default='new')
     users = db.relationship('User', secondary=users_papers,
                             backref=db.backref('papers', lazy='dynamic'))
-
-
-class Scene(BaseModel):
-    __tablename__ = 'scene'
-    describe = db.Column(db.Text, comment='场景描述')
-    
-    
-class Label(BaseModel):
-    __tablename__ = 'label'
-    name = db.Column(db.String(255), comment='标签简述')
-    describe = db.Column(db.Text, comment='标签描述')
     
     
 class Question(BaseModel):
     __tablename__ = 'question'
-    name = db.Column(db.String(255))
     number = db.Column(db.Integer, comment='题号')
     total_question_score = db.Column(db.Integer, comment='考题总分')
     subject_id = db.Column(db.Integer, db.ForeignKey('subject.id'),
@@ -150,7 +149,7 @@ class PaperQuestion(BaseModel):
     question = db.relationship('Question',
                                  backref=db.backref('paper_questions',
                                                     lazy='dynamic'))
-    status = db.Column(db.String(255), comment='状态', default='unapproved')
+    status = db.Column(db.String(255), comment='状态', default='uncommitted')
 
 
 class PaperQuestionLog(BaseModel):

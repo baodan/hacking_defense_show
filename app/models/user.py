@@ -35,7 +35,7 @@ class User(BaseModel, UserMixin):
                             backref=db.backref('users', lazy='dynamic'))
     
     def __repr__(self):
-        return '<User %r>' % self.email
+        return '<User %r>' % self.username
     
 
 class Group(BaseModel):

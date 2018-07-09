@@ -295,7 +295,7 @@ def submit_answer(id):
         return return_data('The exam has ended', 200)
 
     paper_question.user_answer = user_answer
-    paper_question.status = "approved"
+    paper_question.status = "pending"
     log_dict = {
         'user_id': current_user.id,
         'context': user_answer,
@@ -313,7 +313,7 @@ def submit_answer(id):
         db.session.commit()
     except Exception as e:
         current_app.logger.error("{} update db commit exception: {}".format(Paper, e))
-    return return_data('paper close', 200)
+    return return_data('commit success', 200)
 
 
 @answers.route('/submit_score/<int:id>', methods=['PUT'])
@@ -331,6 +331,7 @@ def submit_score(id):
         # 查询数据
         paper_question = PaperQuestion.query.filter_by(id=id).one()
         paper_question.question_score = question_score
+        paper_question.status = "approved"
     except Exception as e:
         current_app.logger.error("{} key=value filter_by exception: {}".format(PaperQuestion, e))
         current_app.logger.error("key=value filter_by: {}".format(id))
@@ -355,7 +356,7 @@ def submit_score(id):
         db.session.commit()
     except Exception as e:
         current_app.logger.error("{} update db commit exception: {}".format(Paper, e))
-    return return_data('paper close', 200)
+    return return_data('approval success', 200)
 
 
 

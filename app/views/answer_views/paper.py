@@ -15,6 +15,7 @@ from tools import model_helper
 from app.views.answer_views import paper_helper
 import threading
 import time
+from app.database import app
 
 
 @exam.route('/create_label', methods=['POST'])
@@ -520,7 +521,6 @@ def create_paper():
                 raise InvalidMessage(str(e), 500)
     if question_list:
         for question_dict in question_list:
-            question_dict['paper_id'] = paper.id
             try:
                 # 获取post内容
                 question = Question(**question_dict)
@@ -528,9 +528,11 @@ def create_paper():
                 current_app.logger.error("{} model init exception: {}".format(Paper, e))
                 current_app.logger.error("model_data: {}".format(paper_dict))
                 raise e
+            question.paper = paper
             db.session.add(question)
     # 添加对象
     db.session.add(paper)
+    paper_helper.compute_score(paper.head)
     try:
         # 同步数据到数据库
         db.session.commit()
@@ -547,10 +549,16 @@ def create_paper():
 @auth_token_required
 def update_paper(id):
     try:
-        com_put(db, Paper, **{'id': id})
+        paper = com_put(db, Paper, **{'id': id})
     except Exception as e:
         current_app.logger.error("[paper][put] fail expection: {}".format(e))
-    
+    paper_helper.compute_score(paper.head)
+    try:
+        # 同步数据到数据库
+        db.session.commit()
+    except Exception as e:
+        current_app.logger.error("{} model update exception: {}".format(Paper, e))
+        raise e
     return return_data('update success', 200)
 
 
@@ -585,7 +593,12 @@ def add_user_to_paper():
         except Exception as e:
             current_app.logger.error("[paper][add_user] fail expection: {}".format(e))
             raise InvalidMessage(str(e), 500)
-    db.session.commit()
+    try:
+        # 同步数据到数据库
+        db.session.commit()
+    except Exception as e:
+        current_app.logger.error("{} model update exception: {}".format(Paper, e))
+        raise e
     return return_data('update success', 200)
 
 
@@ -620,7 +633,12 @@ def remove_user_to_paper():
         except Exception as e:
             current_app.logger.error("[paper][remove_user] fail expection: {}".format(e))
             raise InvalidMessage(str(e), 500)
-    db.session.commit()
+    try:
+        # 同步数据到数据库
+        db.session.commit()
+    except Exception as e:
+        current_app.logger.error("{} model update exception: {}".format(Paper, e))
+        raise e
     return return_data('update success', 200)
 
 
@@ -628,12 +646,20 @@ def remove_user_to_paper():
 @roles_required('admin')
 @auth_token_required
 def delete_paper(id):
-    # 删除场景
     try:
-        com_del(db, Paper, id=id)
+        paper = com_get(Paper, id=id)
     except Exception as e:
-        current_app.logger.error("[paper][del] fail expection: {}".format(e))
+        current_app.logger.error("[paper][get] fail expection: {}".format(e))
         return InvalidMessage(str(e), 500)
+    head = paper.head
+    paper_helper.compute_score(head)
+    db.session.delete(paper)
+    try:
+        # 同步数据到数据库
+        db.session.commit()
+    except Exception as e:
+        current_app.logger.error("{} model delete exception: {}".format(Paper, e))
+        raise e
     return return_data('delete success', 204)
 
 
@@ -674,6 +700,13 @@ def create_question():
     except Exception as e:
         current_app.logger.error("[question][post] fail expection: {}".format(e))
         return InvalidMessage(str(e), 500)
+    paper_helper.compute_score(question.paper.head)
+    try:
+        # 同步数据到数据库
+        db.session.commit()
+    except Exception as e:
+        current_app.logger.error("{} model init exception: {}".format(Question, e))
+        raise e
     data = model_helper.obj_to_dict(question)
     return return_data(data, 201)
 
@@ -683,10 +716,16 @@ def create_question():
 @auth_token_required
 def update_question(id):
     try:
-        com_put(db, Question, **{'id': id})
+        question = com_put(db, Question, **{'id': id})
     except Exception as e:
         current_app.logger.error("[question][put] fail expection: {}".format(e))
-    
+    paper_helper.compute_score(question.paper.head)
+    try:
+        # 同步数据到数据库
+        db.session.commit()
+    except Exception as e:
+        current_app.logger.error("{} model update exception: {}".format(Question, e))
+        raise e
     return return_data('update success', 200)
 
 
@@ -694,12 +733,20 @@ def update_question(id):
 @roles_required('admin')
 @auth_token_required
 def delete_question(id):
-    # 删除场景
     try:
-        com_del(db, Question, id=id)
+        question = com_get(Question, id=id)
     except Exception as e:
-        current_app.logger.error("[question][del] fail expection: {}".format(e))
+        current_app.logger.error("[question][get] fail expection: {}".format(e))
         return InvalidMessage(str(e), 500)
+    head = question.paper.head
+    db.session.delete(question)
+    paper_helper.compute_score(head)
+    try:
+        # 同步数据到数据库
+        db.session.commit()
+    except Exception as e:
+        current_app.logger.error("{} model delete exception: {}".format(Question, e))
+        raise e
     return return_data('delete success', 204)
 
 
@@ -729,7 +776,7 @@ def get_question(id):
     return return_data(data, 200)
 
 
-@exam.route('/start_paper/<int:id>', methods=['PUT'])
+@exam.route('/start_paper/<int:id>', methods=['POST'])
 @roles_required('examiner')
 @auth_token_required
 def start_paper(id):
@@ -745,16 +792,18 @@ def start_paper(id):
     groups = head.groups
     users = paper.users
     questions = paper.questions
+    find_user_head = head.user_head.first()
     # 如果这是第一个paper创建所有group_head
-    if groups and not head.user_heads:
+    if groups and not find_user_head:
         for group in groups:
             group_head_dict = {
                 'head_id': head.id,
                 'group_id': group.id
             }
             group_head = GroupHead(**group_head_dict)
-    else:
-        return return_data('no group to exam', 404)
+            db.session.add(group_head)
+    # else:
+    #     return return_data('no group to exam', 404)
     if users:
         for user in users:
             user_groups = user.groups
@@ -782,33 +831,43 @@ def start_paper(id):
                             'group_head_id': group_head.id
                         }
                         user_head = UserHead(**user_head_dict)
-                    user_paper_dict = {
-                        "user_id": user.id,
-                        "paper_id": paper.id,
-                        "user_head_id": user_head.id
-                    }
-                    # 创建user_paper
-                    user_paper = UserPaper(**user_paper_dict)
-                    # 创建user_paper下的这个user的所有paper_question
-                    for question in questions:
-                        paper_question_dict = {
-                            "user_paper_id": user_paper.id,
-                            "question_id": question.id
+                        db.session.add(user_head)
+                    try:
+                        # 查找这个用户在这个paper是否已经创建user_paper
+                        user_paper = UserPaper.query.filter_by(user_id=user.id, paper_id=paper.id).one_or_none()
+                    except Exception as e:
+                        current_app.logger.error("{} key=value filter_by exception: {}".format(UserPaper, e))
+                        current_app.logger.error("key=value filter_by: {}".format(id))
+                    if not user_paper:
+                        user_paper_dict = {
+                            "user_id": user.id,
+                            "paper_id": paper.id,
+                            "user_head_id": user_head.id
                         }
-                        paper_question = PaperQuestion(**paper_question_dict)
+                        # 创建user_paper
+                        user_paper = UserPaper(**user_paper_dict)
+                        db.session.add(user_paper)
+                        # 创建user_paper下的这个user的所有paper_question
+                        for question in questions:
+                            paper_question_dict = {
+                                "user_paper_id": user_paper.id,
+                                "question_id": question.id
+                            }
+                            paper_question = PaperQuestion(**paper_question_dict)
+                            db.session.add(paper_question)
             else:
-                return return_data('no group to exam', 404)
+                return return_data('a group only have a user in a paper', 404)
     try:
         # 同步数据到数据库
         db.session.commit()
     except Exception as e:
         current_app.logger.error("{} update db commit exception: {}".format(Paper, e))
-    t = threading.Thread(target=compute_time, args=(paper,))
+    t = threading.Thread(target=compute_time, args=(id, paper.remainder_time))
     t.start()
     return return_data('paper going', 200)
 
 
-@exam.route('/end_paper/<int:id>', methods=['PUT'])
+@exam.route('/end_paper/<int:id>', methods=['POST'])
 @roles_required('examiner')
 @auth_token_required
 def end_paper(id):
@@ -828,14 +887,15 @@ def end_paper(id):
     return return_data('paper close', 200)
 
 
-def compute_time(paper):
-    remainder_time = paper.remainder_time
+def compute_time(id, remainder_time):
     while remainder_time:
         time.sleep(60)
         remainder_time = remainder_time - 1
-        paper.remainder_time = remainder_time
-        try:
-            # 同步数据到数据库
-            db.session.commit()
-        except Exception as e:
-            current_app.logger.error("{} update raiming_time exception: {}".format(Paper, e))
+        with app.app_context():
+            try:
+                # 同步数据到数据库
+                paper = Paper.query.filter_by(id=id).one()
+                paper.remainder_time = remainder_time
+                db.session.commit()
+            except Exception as e:
+                current_app.logger.error("{} update raiming_time exception: {}".format(Paper, e))
