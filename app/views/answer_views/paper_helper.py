@@ -95,6 +95,7 @@ def make_subject_reponse_body(subject):
             'type': subject.type,
             'answer': subject.answer,
             'scene_id': subject.scene_id,
+            'topic': subject.topic
         },
         'labels': [],
         'scene': {}
