@@ -448,6 +448,12 @@ def remove_group_to_head():
 @roles_required('admin')
 @auth_token_required
 def delete_head(id):
+    try:
+        head = com_get(Head, id=id)
+    except Exception as e:
+        current_app.logger.error("[head][get] fail expection: {}".format(e))
+        return InvalidMessage(str(e), 500)
+    head.groups = []
     # 删除场景
     try:
         com_del(db, Head, id=id)
