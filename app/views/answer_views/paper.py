@@ -665,6 +665,7 @@ def delete_paper(id):
         current_app.logger.error("[paper][get] fail expection: {}".format(e))
         return InvalidMessage(str(e), 500)
     head = paper.head
+    paper.users = []
     paper_helper.compute_score(head)
     db.session.delete(paper)
     try:
