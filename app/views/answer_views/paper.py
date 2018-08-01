@@ -208,7 +208,14 @@ def update_subject(id):
 @roles_required('admin')
 @auth_token_required
 def delete_subject(id):
-    # 删除场景
+    try:
+        subject = com_get(Subject, id=id)
+    except Exception as e:
+        current_app.logger.error("[subject][get] fail expection: {}".format(e))
+        return InvalidMessage(str(e), 500)
+    # 清除外键多对多数据关联
+    subject.labels = []
+    # 删除试题
     try:
         com_del(db, Subject, id=id)
     except Exception as e:
