@@ -16,7 +16,7 @@ class Config:
     
     SQLALCHEMY_COMMIT_ON_TEARDOWN = False
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    LOG_FILE = '/var/log/assets/assets.log'
+    LOG_FILE = '/var/log/hacking_defense_show/hacking_defense_show.log'
     LOG_LEVEL = 'warning'
     # FLASKY_MAIL_SUBJECT_PREFIX = '[Flasky]'
     # FLASKY_MAIL_SENDER = 'Flasky Admin <flasky@example.com>'

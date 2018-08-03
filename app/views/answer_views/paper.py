@@ -545,7 +545,13 @@ def create_paper():
             db.session.add(question)
     # 添加对象
     db.session.add(paper)
-    paper_helper.compute_score(paper.head)
+    # 获取head对象, add有时可能加载不到paper.head
+    try:
+        head = com_get(Head, id=paper.head_id)
+    except Exception as e:
+        current_app.logger.error("[head][get] fail expection: {}".format(e))
+        return InvalidMessage(str(e), 500)
+    paper_helper.compute_score(head)
     try:
         # 同步数据到数据库
         db.session.commit()

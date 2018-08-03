@@ -4,7 +4,6 @@ from logger_setting import server_log
 from app.models.user import User, Role
 from flask_security import Security, SQLAlchemyUserDatastore
 from flask_security.utils import hash_password
-from app.views.user_views.user import user_datastore
 from app.urls import auth, exam, answers
 
 

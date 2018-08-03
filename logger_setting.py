@@ -11,7 +11,7 @@ LEVEL = {
     'notset': logging.NOTSET,
     'critical': logging.CRITICAL,
 }
-log_file = Config.LOG_FILE if getattr(Config, 'LOG_FILE', False) else '/var/log/assets/assets.log'
+log_file = Config.LOG_FILE if getattr(Config, 'LOG_FILE', False) else '/var/log/hacking_defense_show/hacking_defense_show.log'
 log_level = LEVEL[Config.LOG_LEVEL] if getattr(Config, 'LOG_LEVEL', False) in LEVEL else LEVEL['warning']
 # windows上ConcurrentRotatingFileHandler这个handler会有导致程序卡死，linux上无问题
 # 暂时采用这种方法解决windows上因卡死导致的调试不方便问题
