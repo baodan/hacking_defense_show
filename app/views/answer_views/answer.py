@@ -74,12 +74,15 @@ def get_user_papers():
 @auth_token_required
 def get_user_paper(id):
     try:
-        user_paper = UserPaper.query.filter(and_(UserPaper.paper_id.has(Paper.status == "going"),
-                                                 UserPaper.user_id == id)).one()
+        user_paper = UserPaper.query.filter(and_(UserPaper.paper.has(Paper.status == "going"),
+                                                 UserPaper.user_id == id)).one_or_none()
     except Exception as e:
         current_app.logger.error("[user_paper][get] fail expection: {}".format(e))
         raise InvalidMessage(str(e), 500)
-    data = answer_helper.make_user_paper_reponse_body(user_paper)
+    if user_paper:
+        data = answer_helper.make_user_paper_reponse_body(user_paper)
+    else:
+        data = {}
     return return_data(data, 200)
 
 
@@ -275,6 +278,24 @@ def get_user_head(id):
         return InvalidMessage(str(e), 500)
     data = model_helper.obj_to_dict(user_head)
     return return_data(data, 200)
+
+
+@answers.route('/get_deal_paper_questions', methods=['GET'])
+@roles_accepted('examiner')
+@auth_token_required
+def get_deal_paper_questions():
+    try:
+        paper_questions = PaperQuestion.query.filter(and_(
+            PaperQuestion.user_paper.has(UserPaper.paper.has(Paper.status == 'going')),
+            PaperQuestion.status == 'pending'
+        ))
+    except Exception as e:
+        current_app.logger.error("[user_head][get] fail expection: {}".format(e))
+        return InvalidMessage(str(e), 500)
+    datas = []
+    for paper_question in paper_questions:
+        datas.append(answer_helper.make_paper_question_reponse_body(paper_question))
+    return return_data(datas, 200)
 
 
 @answers.route('/submit_answer/<int:id>', methods=['PUT'])
