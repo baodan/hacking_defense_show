@@ -77,7 +77,7 @@ class Question(BaseModel):
                              comment='考卷id')
     paper = db.relationship('Paper',
                                  backref=db.backref('questions',
-                                                    lazy='dynamic'))
+                                                    lazy='dynamic', order_by=number))
 
 
 class GroupHead(BaseModel):

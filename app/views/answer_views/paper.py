@@ -802,6 +802,15 @@ def get_question(id):
 def start_paper(id):
     try:
         # 查询数据
+        paper_going = Paper.query.filter_by(status="going").all()
+    except Exception as e:
+        current_app.logger.error("{} key=value filter_by exception: {}".format(Paper, e))
+        current_app.logger.error("key=value filter_by: {}".format(id))
+        raise e
+    if len(paper_going) > 0:
+        return return_data('please close others paper', 500)
+    try:
+        # 查询数据
         paper = Paper.query.filter_by(id=id).one()
         paper.status = "going"
     except Exception as e:

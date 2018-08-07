@@ -12,6 +12,7 @@ from app.models.answer import PaperQuestion, UserPaper, GroupHead,\
 from tools import model_helper
 from flask_security import current_user
 from app.views.answer_views import answer_helper
+from sqlalchemy import and_
 
 
 @answers.route('/create_user_paper', methods=['POST'])
@@ -61,7 +62,10 @@ def get_user_papers():
     except Exception as e:
         current_app.logger.error("[user_paper][gets] fail expection: {}".format(e))
         return InvalidMessage(str(e), 500)
-    datas = model_helper.obj_list_to_list_dict(user_papers)
+    datas = []
+    for user_paper in user_papers:
+        data = answer_helper.make_user_paper_reponse_body(user_paper)
+        datas.append(data)
     return return_data(datas, 200)
 
 
@@ -70,11 +74,12 @@ def get_user_papers():
 @auth_token_required
 def get_user_paper(id):
     try:
-        user_paper = com_get(UserPaper, id=id)
+        user_paper = UserPaper.query.filter(and_(UserPaper.paper_id.has(Paper.status == "going"),
+                                                 UserPaper.user_id == id)).one()
     except Exception as e:
         current_app.logger.error("[user_paper][get] fail expection: {}".format(e))
-        return InvalidMessage(str(e), 500)
-    data = model_helper.obj_to_dict(user_paper)
+        raise InvalidMessage(str(e), 500)
+    data = answer_helper.make_user_paper_reponse_body(user_paper)
     return return_data(data, 200)
 
 
@@ -125,7 +130,9 @@ def get_paper_questions():
     except Exception as e:
         current_app.logger.error("[paper_question][gets] fail expection: {}".format(e))
         return InvalidMessage(str(e), 500)
-    datas = model_helper.obj_list_to_list_dict(paper_questions)
+    datas = []
+    for paper_question in paper_questions:
+        datas.append(answer_helper.make_paper_question_reponse_body(paper_question))
     return return_data(datas, 200)
 
 
@@ -138,7 +145,7 @@ def get_paper_question(id):
     except Exception as e:
         current_app.logger.error("[paper_question][get] fail expection: {}".format(e))
         return InvalidMessage(str(e), 500)
-    data = model_helper.obj_to_dict(paper_question)
+    data = answer_helper.make_paper_question_reponse_body(paper_question)
     return return_data(data, 200)
 
 
