@@ -13,12 +13,11 @@ def make_group_head_reponse_body(group_head):
     if group:
         data['group'] = {
             'id': group.id,
-            'name': group.name,
-            'all_score': group.all_score
+            'name': group.name
         }
     if user_heads:
         for user_head in user_heads:
-            user_head = {
+            user_head_dict = {
                 'id': user_head.id,
                 'user': {},
                 'head': {},
@@ -28,34 +27,34 @@ def make_group_head_reponse_body(group_head):
             user = user_head.user
             head = user_head.head
             user_papers = user_head.user_papers
-            data['user_heads'].append(user_head)
+            data['user_heads'].append(user_head_dict)
             if user:
-                user_head['user'] = {
+                user_head_dict['user'] = {
                     'id': user.id,
                     'username': user.username
                 }
             if head:
-                user_head['head'] = {
+                user_head_dict['head'] = {
                     'id': head.id,
                     'name': head.name,
                     'all_score': head.all_score
                 }
             if user_papers:
                 for user_paper in user_papers:
-                    user_paper = {
+                    user_paper_dict = {
                         'id': user_paper.id,
                         'user_score': user_paper.user_score,
                         'paper': {}
                     }
                     paper = user_paper.paper
                     if paper:
-                        user_paper['paper'] = {
+                        user_paper_dict['paper'] = {
                             'id': paper.id,
                             'name': paper.name,
                             'total_paper_score': paper.total_paper_score,
                             'exam_time': paper.exam_time,
                             'remainder_time': paper.remainder_time
                         }
-            data['user_heads'].append(user_head)
+            data['user_heads'].append(user_paper_dict)
             
     return data

@@ -684,7 +684,7 @@ def delete_paper(id):
 
 
 @exam.route('/get_papers', methods=['GET'])
-@roles_required('admin')
+@roles_accepted('admin', 'examiner', 'contestant')
 @auth_token_required
 def get_papers():
     try:
@@ -699,7 +699,7 @@ def get_papers():
 
 
 @exam.route('/get_paper/<int:id>', methods=['GET'])
-@roles_required('admin')
+@roles_accepted('admin', 'examiner', 'contestant')
 @auth_token_required
 def get_paper(id):
     try:
@@ -784,7 +784,7 @@ def get_questions():
 
 
 @exam.route('/get_question/<int:id>', methods=['GET'])
-@roles_required('admin')
+@roles_accepted('admin', 'examiner', 'contestant')
 @auth_token_required
 def get_question(id):
     try:

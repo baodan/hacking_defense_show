@@ -53,7 +53,7 @@ def delete_user_paper(id):
 
 
 @answers.route('/get_user_papers', methods=['GET'])
-@roles_required('admin')
+@roles_accepted('admin', 'examiner', 'contestant')
 @auth_token_required
 def get_user_papers():
     try:
@@ -66,7 +66,7 @@ def get_user_papers():
 
 
 @answers.route('/get_user_paper/<int:id>', methods=['GET'])
-@roles_required('admin')
+@roles_accepted('admin', 'examiner', 'contestant')
 @auth_token_required
 def get_user_paper(id):
     try:
@@ -117,7 +117,7 @@ def delete_paper_question(id):
 
 
 @answers.route('/get_paper_questions', methods=['GET'])
-@roles_required('admin')
+@roles_accepted('admin', 'examiner', 'contestant')
 @auth_token_required
 def get_paper_questions():
     try:
@@ -130,7 +130,7 @@ def get_paper_questions():
 
 
 @answers.route('/get_paper_question/<int:id>', methods=['GET'])
-@roles_required('admin')
+@roles_accepted('admin', 'examiner', 'contestant')
 @auth_token_required
 def get_paper_question(id):
     try:
@@ -181,7 +181,7 @@ def delete_group_head(id):
 
 
 @answers.route('/get_group_heads', methods=['GET'])
-@roles_required('admin')
+@roles_accepted('admin', 'examiner', 'contestant')
 @auth_token_required
 def get_group_heads():
     try:
@@ -194,7 +194,7 @@ def get_group_heads():
 
 
 @answers.route('/get_group_head/<int:id>', methods=['GET'])
-@roles_required('admin')
+@roles_accepted('admin', 'examiner', 'contestant')
 @auth_token_required
 def get_group_head(id):
     try:
@@ -245,7 +245,7 @@ def delete_user_head(id):
 
 
 @answers.route('/get_user_heads', methods=['GET'])
-@roles_required('admin')
+@roles_accepted('admin', 'examiner', 'contestant')
 @auth_token_required
 def get_user_heads():
     try:
@@ -258,7 +258,7 @@ def get_user_heads():
 
 
 @answers.route('/get_user_head/<int:id>', methods=['GET'])
-@roles_required('admin')
+@roles_accepted('admin', 'examiner', 'contestant')
 @auth_token_required
 def get_user_head(id):
     try:

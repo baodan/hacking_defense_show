@@ -4,7 +4,7 @@ from logger_setting import server_log
 from app.models.user import User, Role
 from flask_security import Security, SQLAlchemyUserDatastore
 from flask_security.utils import hash_password
-from app.urls import auth, exam, answers
+from app.urls import auth, exam, answers, show
 
 
 # 可以直接把对象里面的配置数据转换到app.config里面
@@ -20,6 +20,7 @@ def create_app():
     app.register_blueprint(auth, url_prefix='/auth')
     app.register_blueprint(exam, url_prefix='/exam')
     app.register_blueprint(answers, url_prefix='/answers')
+    app.register_blueprint(show, url_prefix='/show')
     # app.logger.addHandler(error_log)
     # 注册 Flask-SQLAlchemy
     # 这个对象在其他地方想要使用
