@@ -51,7 +51,8 @@ def make_paper_question_reponse_body(paper_question):
             'id': paper_question.id,
             'status': paper_question.status,
             'question_score': paper_question.question_score,
-            'user_paper_id': paper_question.user_paper_id
+            'user_paper_id': paper_question.user_paper_id,
+            'user_answer': paper_question.user_answer
         },
         'question': {}
     }
