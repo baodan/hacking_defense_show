@@ -9,6 +9,7 @@ from app.models.answer import GroupHead
 from tools.common_restful import com_get, com_gets
 from app.views.answer_views.display_helper import make_group_head_reponse_body
 
+#id = head.id
 
 @show.route('/show_all_group_score/<int:id>', methods=['GET'])
 @roles_required('admin')
@@ -22,4 +23,7 @@ def show_all_group_score(id):
             if group_head:
                 group_head_dict = make_group_head_reponse_body(group_head)
                 datas.append(group_head_dict)
+        #对datas进行排序按照 total_group_score
+        sorted(datas, key=lambda data : data['group_head']["total_group_score"], reverse=True)
+
     return return_data(datas, 200)

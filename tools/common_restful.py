@@ -87,6 +87,42 @@ def com_post(db, model_cls, args=None):
                 current_app.logger.error("model_data: {}".format(model_data))
                 raise e
             return obj
+
+#批量创建
+def com_posts(db, model_cls, args=None):
+    # 获取post内容
+    if request.headers['Content-Type'] == 'application/json':
+        if args is None:
+            args = request.json
+        current_app.logger.debug('com_post args: {}'.format(args))
+    else:
+        raise 'only support json data'
+    if args:
+        # 获取多个创建数据
+        model_datas = args
+        # 数据需要为列表形式并存在
+        if model_datas and isinstance(model_datas, list):
+            data_list = []
+            for model_data in model_datas:
+                if model_data and isinstance(model_data,dict):
+                    try:
+                        # 获取post中多个创建内容
+                        obj = model_cls(**model_data)
+                        data_list.append(obj)
+                    except Exception as e:
+                        current_app.logger.error("{} model init exception: {}".format(model_cls, e))
+                        current_app.logger.error("model_data: {}".format(model_data))
+                        raise e
+                    # 添加对象
+            db.session.add_all(data_list)
+            try:
+                # 同步数据到数据库
+                db.session.commit()
+            except Exception as e:
+                current_app.logger.error("{} model init exception: {}".format(model_cls, e))
+                current_app.logger.error("model_datas: {}".format(model_datas))
+                raise e
+            return data_list
         
 
 def com_get(model_cls, **filter_by):
@@ -136,6 +172,48 @@ def com_put(db, model_cls, args=None, **filter_by):
             current_app.logger.error("key=value filter_by: {}".format(filter_by))
             raise e
         return obj
+
+#批量处理修改请求
+def com_puts(db, model_cls,args=None):
+    # 数据头需为json格式
+    if request.headers['Content-Type'] == 'application/json':
+        if args is None:
+            args = request.json
+        current_app.logger.debug('com_puts args: {}'.format(args))
+    else:
+        raise 'only support json data'
+    if args:
+        data_list = []
+        put_datas = args
+        if put_datas:
+            for put_data in put_datas:
+                id = put_data['id']
+                msg = put_data.pop('id')
+                try:
+                    # 更新数据
+                    model_cls.query.filter_by(id = id).update(msg)
+                except Exception as e:
+                    current_app.logger.error("{} key=value filter_by exception update: {}".format(model_cls, e))
+                    current_app.logger.error('''filter_by: {}.
+                    put_data: {}.
+                    '''.format(id, put_data))
+                    raise e
+                try:
+                    # 查询数据
+                    obj = model_cls.query.filter_by(id = id).one()
+                except Exception as e:
+                    current_app.logger.error("{} key=value filter_by exception: {}".format(model_cls, e))
+                    current_app.logger.error("key=value filter_by: {}".format(id))
+                    raise e
+                else:
+                    data_list.append(obj)
+            try:
+                # 同步数据到数据库
+                db.session.commit()
+            except Exception as e:
+                current_app.logger.error("{} update db commit exception: {}".format(model_cls, e))
+                raise e
+        return data_list
 
 
 def com_del(db, model_cls, **filter_by):

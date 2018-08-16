@@ -2,8 +2,8 @@ from app.urls import exam
 from flask import current_app, request
 from flask_security import auth_token_required
 from flask_security import roles_accepted, roles_required
-from tools.common_restful import com_put, com_post, com_del,\
-    com_get, com_gets
+from tools.common_restful import com_put, com_post, com_del, \
+    com_get, com_gets, com_posts, com_puts
 from app.database import db
 from app.customer_error_class import InvalidMessage
 from app.return_format import return_data
@@ -711,35 +711,42 @@ def get_paper(id):
     return return_data(data, 200)
 
 
+#更改为批量创建
 @exam.route('/create_question', methods=['POST'])
 @roles_required('admin')
 @auth_token_required
 def create_question():
     try:
-        question = com_post(db, Question)
+        questions = com_posts(db, Question)
     except Exception as e:
-        current_app.logger.error("[question][post] fail expection: {}".format(e))
+        current_app.logger.error("[questions][post] fail expection: {}".format(e))
         return InvalidMessage(str(e), 500)
-    paper_helper.compute_score(question.paper.head)
+    for question in questions:
+        paper_helper.compute_score(question.paper.head)
     try:
         # 同步数据到数据库
         db.session.commit()
     except Exception as e:
         current_app.logger.error("{} model init exception: {}".format(Question, e))
         raise e
-    data = model_helper.obj_to_dict(question)
-    return return_data(data, 201)
+    datas = []
+    for question in questions:
+        data_obj = model_helper.obj_to_dict(question)
+        datas.append(data_obj)
+    return return_data(datas, 201)
 
 
-@exam.route('/update_question/<int:id>', methods=['PUT'])
+@exam.route('/update_question', methods=['PUT'])
 @roles_required('admin')
 @auth_token_required
-def update_question(id):
+def update_question():
+    questions = None
     try:
-        question = com_put(db, Question, **{'id': id})
+        questions = com_puts(db, Question)
     except Exception as e:
-        current_app.logger.error("[question][put] fail expection: {}".format(e))
-    paper_helper.compute_score(question.paper.head)
+        current_app.logger.error("[questions][put] fail expection: {}".format(e))
+    for question in questions:
+        paper_helper.compute_score(question.paper.head)
     try:
         # 同步数据到数据库
         db.session.commit()
@@ -749,18 +756,27 @@ def update_question(id):
     return return_data('update success', 200)
 
 
-@exam.route('/delete_question/<int:id>', methods=['DELETE'])
+#批量删除delete-->改为post
+@exam.route('/delete_question', methods=['POST'])
 @roles_required('admin')
 @auth_token_required
-def delete_question(id):
-    try:
-        question = com_get(Question, id=id)
-    except Exception as e:
-        current_app.logger.error("[question][get] fail expection: {}".format(e))
-        return InvalidMessage(str(e), 500)
-    head = question.paper.head
-    db.session.delete(question)
-    paper_helper.compute_score(head)
+def delete_question():
+    # 获取post内容
+    if request.headers['Content-Type'] == 'application/json':
+        datas = request.json
+        current_app.logger.debug('com_post args: {}'.format(datas))
+    else:
+        raise 'only support json data'
+    for data in datas:
+        id = data['id']
+        try:
+            question = com_get(Question, id=id)
+        except Exception as e:
+            current_app.logger.error("[question][get] fail expection: {}".format(e))
+            return InvalidMessage(str(e), 500)
+        head = question.paper.head
+        db.session.delete(question)
+        paper_helper.compute_score(head)
     try:
         # 同步数据到数据库
         db.session.commit()
