@@ -14,15 +14,15 @@ groups_users = db.Table('groups_users',
 
 class Role(BaseModel, RoleMixin):
     __tablename__ = 'role'
-    name = db.Column(db.String(255), unique=True)
-    description = db.Column(db.String(255))
+    name = db.Column(db.String(255), unique=True, index=True)
+    description = db.Column(db.String(255), index=True)
 
 
 class User(BaseModel, UserMixin):
     __tablename__ = 'user'
-    username = db.Column(db.String(255), unique=True)
+    username = db.Column(db.String(255), unique=True, index=True)
     password = db.Column(db.String(255))
-    active = db.Column(db.Boolean())
+    active = db.Column(db.Boolean(), index=True)
     confirmed_at = db.Column(db.DateTime())
     last_login_at = db.Column(db.DateTime())
     current_login_at = db.Column(db.DateTime())
@@ -40,6 +40,6 @@ class User(BaseModel, UserMixin):
 
 class Group(BaseModel):
     __tablename__ = 'group'
-    name = db.Column(db.String(255), unique=True)
-    description = db.Column(db.Text())
+    name = db.Column(db.String(255), unique=True, index=True)
+    description = db.Column(db.Text(), index=True)
 

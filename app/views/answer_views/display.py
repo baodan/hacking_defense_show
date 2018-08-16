@@ -18,7 +18,7 @@ def show_all_group_score(id):
     datas = []
     if groups:
         for group in groups:
-            group_head = GroupHead.query.filter_by(group_id=group.id, head_id=id).one()
+            group_head = GroupHead.query.filter_by(group_id=group.id, head_id=id).one_or_none()
             if group_head:
                 group_head_dict = make_group_head_reponse_body(group_head)
                 datas.append(group_head_dict)
