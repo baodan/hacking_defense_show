@@ -1,5 +1,6 @@
 from app.views.answer_views.paper_helper import make_question_reponse_body, make_paper_reponse_body
 from app.models.answer import PaperQuestion
+from app.views.user_views.user_helper import make_user_reponse_body
 
 
 def compute_score(paper_question):
@@ -54,9 +55,13 @@ def make_paper_question_reponse_body(paper_question):
             'user_paper_id': paper_question.user_paper_id,
             'user_answer': paper_question.user_answer
         },
-        'question': {}
+        'question': {},
+        'user': {}
     }
     question = paper_question.question
+    user = paper_question.user_paper.user
     if question:
         data['question'] = make_question_reponse_body(question)
+    if user:
+        data['user'] = make_user_reponse_body(user)
     return data
