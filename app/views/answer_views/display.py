@@ -24,6 +24,6 @@ def show_all_group_score(id):
                 group_head_dict = make_group_head_reponse_body(group_head)
                 datas.append(group_head_dict)
         #对datas进行排序按照 total_group_score
-        sorted(datas, key=lambda data : data['group_head']["total_group_score"], reverse=True)
+        datas = sorted(datas, key=lambda data : data['group_head']["total_group_score"], reverse=True)
 
     return return_data(datas, 200)
