@@ -5,12 +5,12 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 class Config:
-    SECRET_KEY = os.environ.get('SECRET_KEY') or 'Zn!(h$jK%8yx=mzA'
+    SECRET_KEY = os.environ.get('SECRET_KEY') or 'Z!'
     
     SECURITY_TRACKABLE = True
     SECURITY_REGISTERABLE = False
     SECURITY_SEND_REGISTER_EMAIL = False
-    SECURITY_PASSWORD_HASH = 'pbkdf2_sha512'
+    SECURITY_PASSWORD_HASH = 'bcrypt'
     SECURITY_PASSWORD_SALT = SECRET_KEY
     SECURITY_TOKEN_AUTHENTICATION_HEADER = 'X-Auth-Token'
     
@@ -54,7 +54,8 @@ class TestingConfig(Config):
 # 生产环境
 class ProductionConfig(Config):
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
-                              'postgresql://nantian:postgres@0.0.0.0:5432/nantiandb'
+                              'postgresql://hack:hack@localhost:5432/hack'
+
 
 config = {
     'development': DevelopmentConfig,

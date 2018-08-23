@@ -8,7 +8,7 @@ from app.urls import auth, exam, answers, show
 
 
 # 可以直接把对象里面的配置数据转换到app.config里面
-app.config.from_object(config['development'])
+app.config.from_object(config['production'])
 
 
 def create_app():
