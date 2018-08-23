@@ -188,7 +188,8 @@ def com_puts(db, model_cls,args=None):
         if put_datas:
             for put_data in put_datas:
                 id = put_data['id']
-                msg = put_data.pop('id')
+                put_data.pop('id')
+                msg = put_data
                 try:
                     # 更新数据
                     model_cls.query.filter_by(id = id).update(msg)
@@ -196,7 +197,7 @@ def com_puts(db, model_cls,args=None):
                     current_app.logger.error("{} key=value filter_by exception update: {}".format(model_cls, e))
                     current_app.logger.error('''filter_by: {}.
                     put_data: {}.
-                    '''.format(id, put_data))
+                    '''.format(id, msg))
                     raise e
                 try:
                     # 查询数据
