@@ -763,7 +763,7 @@ def update_question():
 def delete_question():
     # 获取post内容
     if request.headers['Content-Type'] == 'application/json':
-        datas = request.json
+        datas = request.json.get('dic_delete',[])
         current_app.logger.debug('com_post args: {}'.format(datas))
     else:
         raise 'only support json data'

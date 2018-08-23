@@ -99,7 +99,7 @@ def com_posts(db, model_cls, args=None):
         raise 'only support json data'
     if args:
         # 获取多个创建数据
-        model_datas = args
+        model_datas = args.get('dic_create',[])
         # 数据需要为列表形式并存在
         if model_datas and isinstance(model_datas, list):
             data_list = []
@@ -184,7 +184,7 @@ def com_puts(db, model_cls,args=None):
         raise 'only support json data'
     if args:
         data_list = []
-        put_datas = args
+        put_datas = args.get('dic_update',[])
         if put_datas:
             for put_data in put_datas:
                 id = put_data['id']
